@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1034364915901-ldgj04q0kou58o3g1kp8ma1oq5tb8rbs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.prm392.estoreprm392",
+            "certificate_hash": "208f7d3830addb20083b1dc372d79633a4260155"
+          }
+        },
+        {
           "client_id": "1034364915901-n0guo1dml5bmkkbj7hf7kih67um43hgq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

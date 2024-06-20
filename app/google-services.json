@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1034364915901",
+    "project_id": "prm392-estorevip",
+    "storage_bucket": "prm392-estorevip.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034364915901:android:abfa7d1dbc5bf22ab867d4",
+        "android_client_info": {
+          "package_name": "com.prm392.estoreprm392"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1034364915901-n0guo1dml5bmkkbj7hf7kih67um43hgq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.prm392.estoreprm392",
+            "certificate_hash": "813bf8f4cab5ba3e3f728f8a79fd09d418003f7e"
+          }
+        },
+        {
+          "client_id": "1034364915901-dr7ctm85bsdmt113jiom25a7frv2sudf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeR98HcYT4X6nejVFiM5fIQ4nFjHUAGYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1034364915901-dr7ctm85bsdmt113jiom25a7frv2sudf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

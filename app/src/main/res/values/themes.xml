@@ -1,9 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.EStorePRM392" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:itemTextAppearance">@style/MenuItemTextAppearance</item>
     </style>
 
     <style name="Theme.EStorePRM392" parent="Base.Theme.EStorePRM392" />
+    <style name="MenuItemTextAppearance">
+        <item name="android:textColor">@color/magenta</item> <!-- Red color -->
+    </style>
 </resources>

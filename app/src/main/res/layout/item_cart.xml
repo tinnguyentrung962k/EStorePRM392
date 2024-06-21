@@ -9,12 +9,17 @@
     android:elevation="2dp">
 
     <ImageView
-        android:id="@+id/imgProduct"
+        android:id="@+id/cart_product_image"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/ic_launcher_foreground"
         android:layout_marginEnd="8dp" />
-
+<!--    <ImageView-->
+<!--        android:id="@+id/imgProduct"-->
+<!--        android:layout_width="60dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:src="@drawable/ic_launcher_foreground"-->
+<!--        android:layout_marginEnd="8dp" />-->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -22,15 +27,27 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tvProductName"
+            android:id="@+id/cart_product_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Product Name"
             android:textSize="16sp"
             android:textStyle="bold"/>
-
+<!--        <TextView-->
+<!--            android:id="@+id/tvProductName"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Product Name"-->
+<!--            android:textSize="16sp"-->
+<!--            android:textStyle="bold"/>-->
+<!--        <TextView-->
+<!--            android:id="@+id/tvProductPrice"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="₦6,000"-->
+<!--            android:textSize="14sp" />-->
         <TextView
-            android:id="@+id/tvProductPrice"
+            android:id="@+id/cart_product_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="₦6,000"

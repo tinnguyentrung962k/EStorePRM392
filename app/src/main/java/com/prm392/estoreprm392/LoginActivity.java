@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         EditText etUserName = findViewById(R.id.userNameInput);
         EditText etPass = findViewById(R.id.passWordInput);
         Button btnLogin = findViewById(R.id.loginBtn);
-
+        TextView signUp = findViewById(R.id.signUptv);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,6 +72,14 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 signUpWithFirebase(phoneOrEmail, password);
+            }
+        });
+        signUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
 

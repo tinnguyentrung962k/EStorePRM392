@@ -57,32 +57,6 @@
 <!--            android:textSize="14sp" />-->
 
         <!-- Search bar -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/ic_launcher_background"
-            android:padding="8dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentStart="true"
-                android:src="@drawable/baseline_search_24" />
-<!--            <EditText-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_toEndOf="@id/menu_button"-->
-<!--                android:layout_marginStart="8dp"-->
-<!--                android:hint="Search items..."-->
-<!--                android:background="@null" />-->
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:hint="Search items..."
-                android:background="@null" />
-        </RelativeLayout>
 
         <!-- Categories -->
         <HorizontalScrollView
@@ -94,48 +68,19 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <!-- Category buttons -->
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tshirt" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Shirt" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Pants" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="View All" />
-            </LinearLayout>
+                android:orientation="horizontal"/>
         </HorizontalScrollView>
 
         <!-- New Arrivals Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="New Arrival"
-            android:textSize="18sp"
-            android:textStyle="bold" />
 
         <!-- RecyclerView for Products -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_new_arrivals"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp" />
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_new_arrivals"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp" />
+    </LinearLayout>
 
     <!-- Bottom Navigation -->
 <!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->

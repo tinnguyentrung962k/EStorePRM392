@@ -6,11 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-//import com.google.firebase.database.DataSnapshot;
-//import com.google.firebase.database.DatabaseError;
-//import com.google.firebase.database.DatabaseReference;
-//import com.google.firebase.database.FirebaseDatabase;
-//import com.google.firebase.database.ValueEventListener;
+import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+//import com.google.firebase.firestore.QuerySnapshot;
+import com.prm392.estoreprm392.service.model.Product;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,45 +32,24 @@ public class NewArrivalsActivity extends AppCompatActivity {
         productAdapter = new ProductAdapter(this, productList);
         recyclerViewNewArrivals.setAdapter(productAdapter);
 
-//        loadNewArrivals();
-
-//        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-//        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-//            switch (item.getItemId()) {
-//                case R.id.nav_home:
-//                    // Handle home action
-//                    return true;
-//                case R.id.nav_favorites:
-//                    // Handle favorites action
-//                    return true;
-//                case R.id.nav_cart:
-//                    // Handle cart action
-//                    return true;
-//                case R.id.nav_profile:
-//                    // Handle profile action
-//                    return true;
-//            }
-//            return false;
-//        });
+        fetchProducts();
     }
 
-//    private void loadNewArrivals() {
-//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("products");
-//        databaseReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                productList.clear();
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    Product product = dataSnapshot.getValue(Product.class);
-//                    productList.add(product);
-//                }
-//                productAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Handle error
-//            }
-//        });
-//    }
+    private void fetchProducts() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("products")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Product product = document.toObject(Product.class);
+                            productList.add(product);
+                        }
+                        productAdapter.notifyDataSetChanged();
+                    } else {
+                        // Handle the error
+                    }
+                });
+    }
+
 }

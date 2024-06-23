@@ -2,6 +2,7 @@ package com.prm392.estoreprm392;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,16 +10,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-//import com.bumptech.glide.Glide;
-//import com.google.firebase.storage.FirebaseStorage;
+import com.bumptech.glide.Glide;
+//import com.google.firebase.FirebaseStorage;
 //import com.google.firebase.storage.StorageReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.prm392.estoreprm392.service.model.Product;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
     private List<Product> productList;
     private Context context;
-//    private FirebaseStorage firebaseStorage;
+
 
     public ProductAdapter(Context context, List<Product> productList) {
         this.context = context;
@@ -54,6 +59,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             ivProductImage = itemView.findViewById(R.id.ivProductImage);
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
+
             itemView.setOnClickListener(this);
         }
 
@@ -61,11 +67,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             tvProductName.setText(product.getName());
             tvProductPrice.setText(String.valueOf(product.getPrice()));
 
-            // Load image from Firebase Storage
-//            StorageReference imageRef = firebaseStorage.getReferenceFromUrl(product.getImageUrl());
-//            Glide.with(context)
-//                    .load(imageRef)
-//                    .into(ivProductImage);
+//            ivProductImage.setImageURI(Uri.parse(product.getImage()));
+            // Load image from URL
+            String urls = "https://cdn.tgdd.vn/Products/Images/44/325699/acer-aspire-a515-58gm-53pz-i5-nxkq4sv008-2.jpg";
+            Glide.with(context)
+                    .load(urls)
+                    .into(ivProductImage);
+
         }
 
         @Override
@@ -77,7 +85,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 intent.putExtra("name", clickedProduct.getName());
                 intent.putExtra("price", clickedProduct.getPrice());
                 intent.putExtra("description", clickedProduct.getDescription());
-                intent.putExtra("imageUrl", clickedProduct.getImageUrl());
+                intent.putExtra("imageUrl", clickedProduct.getImage());
                 context.startActivity(intent);
             }
         }

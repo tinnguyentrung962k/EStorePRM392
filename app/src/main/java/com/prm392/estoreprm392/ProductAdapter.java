@@ -40,8 +40,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        Product product = productList.get(position);
-        holder.bind(product);
+        Product item = productList.get(position);
+        holder.tvProductName.setText(item.getName());
+        Glide.with(holder.itemView.getContext()).load(item.getImage()).into(holder.ivProduct);
+        holder.tvProductPrice.setText(String.valueOf(item.getPrice()));
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductDetailActivity.class);
+            intent.putExtra("product_name", item.getName());
+            intent.putExtra("product_image", item.getImage());
+            intent.putExtra("product_price", item.getPrice());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -51,30 +61,28 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private ImageView ivProductImage;
-        private TextView tvProductName, tvProductPrice;
+        private ImageView ivProduct;
+        private TextView tvProductName, tvProductPrice, tvViewMore;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivProductImage = itemView.findViewById(R.id.ivProductImage);
+            ivProduct = itemView.findViewById(R.id.ivProduct);
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
-
+            tvViewMore = itemView.findViewById(R.id.tvViewMore);
             itemView.setOnClickListener(this);
         }
 
-        void bind(Product product) {
-            tvProductName.setText(product.getName());
-            tvProductPrice.setText(String.valueOf(product.getPrice()));
-
-//            ivProductImage.setImageURI(Uri.parse(product.getImage()));
-            // Load image from URL
-            String urls = "https://cdn.tgdd.vn/Products/Images/44/325699/acer-aspire-a515-58gm-53pz-i5-nxkq4sv008-2.jpg";
-            Glide.with(context)
-                    .load(urls)
-                    .into(ivProductImage);
-
-        }
+//        void bind(Product product) {
+//            tvProductName.setText(product.getName());
+//            tvProductPrice.setText(String.valueOf(product.getPrice()));
+//
+////            ivProductImage.setImageURI(Uri.parse(product.getImage()));
+//            // Load image from URL
+//            String urls = "https://cdn.tgdd.vn/Products/Images/44/325699/acer-aspire-a515-58gm-53pz-i5-nxkq4sv008-2.jpg";
+//
+//
+//        }
 
         @Override
         public void onClick(View view) {

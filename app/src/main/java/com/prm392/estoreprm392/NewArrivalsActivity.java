@@ -24,7 +24,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.prm392.estoreprm392.databinding.ActivityMainBinding;
 import com.prm392.estoreprm392.databinding.ActivityNewArrivalsBinding;
 import com.prm392.estoreprm392.service.model.Product;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,11 +50,8 @@ public class NewArrivalsActivity extends AppCompatActivity {
         recyclerViewNewArrivals.setAdapter(productAdapter);
         recyclerViewNewArrivals.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerViewNewArrivals.setAdapter(productAdapter);
-
         fetchProducts();
     }
-
-
     private void setupView() {
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);

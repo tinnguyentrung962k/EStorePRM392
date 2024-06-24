@@ -1,7 +1,6 @@
 package com.prm392.estoreprm392;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -118,15 +117,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void doAfterAuth(FirebaseUser user) {
-
-
-        Intent intent = new Intent(LoginActivity.this, NewArrivalsActivity.class);
-        intent.putExtra("uid", user.getUid());
-        intent.putExtra("email", user.getEmail());
-        intent.putExtra("name", user.getDisplayName());
-        intent.putExtra("phone", user.getPhoneNumber());
-        intent.putExtra("protoUrl", user.getPhotoUrl() == null ? "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" : user.getPhotoUrl().toString());
-        startActivity(intent);
+        Intent newArrivalsIntent = new Intent(LoginActivity.this, NewArrivalsActivity.class);
+        startActivity(newArrivalsIntent);
         finish();
     }
 
@@ -221,8 +213,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -234,7 +224,6 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             handleCreateUserWithEmailSuccess(user);
-
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());

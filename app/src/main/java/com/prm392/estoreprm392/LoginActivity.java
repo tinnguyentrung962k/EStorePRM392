@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra("email", user.getEmail());
         intent.putExtra("name", user.getDisplayName());
         intent.putExtra("phone", user.getPhoneNumber());
-        intent.putExtra("photoUrl", user.getPhotoUrl() == null ? "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" : user.getPhotoUrl().toString());
+        intent.putExtra("protoUrl", user.getPhotoUrl() == null ? "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png" : user.getPhotoUrl().toString());
         startActivity(intent);
         finish();
     }

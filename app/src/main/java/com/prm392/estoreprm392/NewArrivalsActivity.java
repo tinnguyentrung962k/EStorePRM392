@@ -18,12 +18,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 //import com.google.firebase.firestore.QuerySnapshot;
 import com.prm392.estoreprm392.databinding.ActivityMainBinding;
 import com.prm392.estoreprm392.databinding.ActivityNewArrivalsBinding;
 import com.prm392.estoreprm392.service.model.Product;
+import com.prm392.estoreprm392.service.model.User;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,16 +36,16 @@ public class NewArrivalsActivity extends AppCompatActivity {
     private RecyclerView recyclerViewNewArrivals;
     private ProductAdapter productAdapter;
     private List<Product> productList;
+    private FirebaseUser currentUser;
     private ActivityNewArrivalsBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityNewArrivalsBinding.inflate(getLayoutInflater());
         setContentView(R.layout.activity_new_arrivals);
-
         setupView();
-
-
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
         recyclerViewNewArrivals = findViewById(R.id.rvProduct);
         recyclerViewNewArrivals.setLayoutManager(new LinearLayoutManager(this));
         productList = new ArrayList<> ();
@@ -84,7 +87,8 @@ public class NewArrivalsActivity extends AppCompatActivity {
                     });
                 }
             } else if (item.getItemId() == R.id.action_cart) {
-
+                Intent cartIntent = new Intent(NewArrivalsActivity.this, CartActivity.class);
+                startActivity(cartIntent);
             } else if (item.getItemId() == R.id.action_logout) {
                 mAuth.signOut();
                 Intent intent = new Intent(NewArrivalsActivity.this, LoginActivity.class);

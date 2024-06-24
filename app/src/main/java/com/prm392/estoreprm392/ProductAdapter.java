@@ -46,11 +46,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.tvProductPrice.setText(String.valueOf(item.getPrice()));
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ProductDetailActivity.class);
+            Intent intent = new Intent(holder.itemView.getContext(), ProductDetailActivity.class);
             intent.putExtra("product_name", item.getName());
             intent.putExtra("product_image", item.getImage());
             intent.putExtra("product_price", item.getPrice());
-            context.startActivity(intent);
+            intent.putExtra("product_description", item.getDescription());
+            holder.itemView.getContext().startActivity(intent);
         });
     }
 

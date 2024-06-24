@@ -21,6 +21,9 @@
         <activity
             android:name=".RegistrationActivity"
             android:exported="false" />
+        <activity android:name=".ProductDetailActivity"
+            android:exported="false"
+            />
         <activity
             android:name=".LoginActivity"
             android:exported="true">

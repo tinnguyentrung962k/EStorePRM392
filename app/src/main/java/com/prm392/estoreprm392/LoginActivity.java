@@ -118,6 +118,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void doAfterAuth(FirebaseUser user) {
+
+
         Intent intent = new Intent(LoginActivity.this, NewArrivalsActivity.class);
         intent.putExtra("uid", user.getUid());
         intent.putExtra("email", user.getEmail());

@@ -53,6 +53,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -62,6 +64,9 @@ import androidx.recyclerview.widget.RecyclerView;
 //import com.google.firebase.database.DatabaseReference;
 //import com.google.firebase.database.FirebaseDatabase;
 //import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,20 +76,27 @@ public class CartActivity extends AppCompatActivity {
     private CartAdapter cartAdapter;
     private List<CartItem> cartItemList;
     private Button btnCheckout;
+    private TextView cartTitle;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+
+
         recyclerViewCart = findViewById(R.id.recycler_view_cart);
         recyclerViewCart.setLayoutManager(new LinearLayoutManager(this));
         cartItemList = new ArrayList<>();
         cartAdapter = new CartAdapter(this, cartItemList);
         recyclerViewCart.setAdapter(cartAdapter);
-
+        cartTitle = findViewById(R.id.tvCartTitle);
         btnCheckout = findViewById(R.id.btnCheckout);
 
+        cartTitle.setText(currentUser.getDisplayName() + "'s Cart");
 //        loadCartItems();
 
         btnCheckout.setOnClickListener(new View.OnClickListener() {

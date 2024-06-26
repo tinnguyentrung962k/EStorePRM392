@@ -39,10 +39,10 @@ import com.prm392.estoreprm392.service.model.User;
 import kotlin.text.Regex;
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "FacebookSignInActivity";
+    private static final String TAG = "SignInActivity";
 
-    private FirebaseAuth mAuth = null;
-    private FirebaseFirestore db = null;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     //one tap sign in
     private GoogleSignInClient mGoogleSignInClient;
@@ -117,9 +117,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void doAfterAuth(FirebaseUser user) {
-
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
+        Intent newArrivalsIntent = new Intent(LoginActivity.this, NewArrivalsActivity.class);
+        startActivity(newArrivalsIntent);
         finish();
     }
 

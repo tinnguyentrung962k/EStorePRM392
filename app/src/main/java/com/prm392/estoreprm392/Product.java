@@ -2,7 +2,7 @@ package com.prm392.estoreprm392;
 
 public class Product {
     private String name;
-    private String price;
+    private int price;
     private String description;
     private String imageUrl;
 
@@ -10,7 +10,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, String price, String description, String imageUrl) {
+    public Product(String name, int price, String description, String imageUrl) {
         this.name = name;
         this.price = price;
         this.description = description;
@@ -25,11 +25,11 @@ public class Product {
         this.name = name;
     }
 
-    public String getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

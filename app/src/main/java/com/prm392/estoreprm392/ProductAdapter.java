@@ -2,6 +2,7 @@ package com.prm392.estoreprm392;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,16 +10,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-//import com.bumptech.glide.Glide;
-//import com.google.firebase.storage.FirebaseStorage;
+import com.bumptech.glide.Glide;
+//import com.google.firebase.FirebaseStorage;
 //import com.google.firebase.storage.StorageReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.prm392.estoreprm392.service.model.Product;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
     private List<Product> productList;
     private Context context;
-//    private FirebaseStorage firebaseStorage;
+
 
     public ProductAdapter(Context context, List<Product> productList) {
         this.context = context;
@@ -35,8 +40,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        Product product = productList.get(position);
-        holder.bind(product);
+        Product item = productList.get(position);
+        holder.tvProductName.setText(item.getName());
+        Glide.with(holder.itemView.getContext()).load(item.getImage()).into(holder.ivProduct);
+        holder.tvProductPrice.setText(String.valueOf(item.getPrice()));
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(holder.itemView.getContext(), ProductDetailActivity.class);
+            intent.putExtra("product_name", item.getName());
+            intent.putExtra("product_image", item.getImage());
+            intent.putExtra("product_price", item.getPrice());
+            intent.putExtra("product_description", item.getDescription());
+            holder.itemView.getContext().startActivity(intent);
+        });
     }
 
     @Override
@@ -46,27 +62,28 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private ImageView ivProductImage;
-        private TextView tvProductName, tvProductPrice;
+        private ImageView ivProduct;
+        private TextView tvProductName, tvProductPrice, tvViewMore;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivProductImage = itemView.findViewById(R.id.ivProductImage);
+            ivProduct = itemView.findViewById(R.id.ivProduct);
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
+            tvViewMore = itemView.findViewById(R.id.tvViewMore);
             itemView.setOnClickListener(this);
         }
 
-        void bind(Product product) {
-            tvProductName.setText(product.getName());
-            tvProductPrice.setText(String.valueOf(product.getPrice()));
-
-            // Load image from Firebase Storage
-//            StorageReference imageRef = firebaseStorage.getReferenceFromUrl(product.getImageUrl());
-//            Glide.with(context)
-//                    .load(imageRef)
-//                    .into(ivProductImage);
-        }
+//        void bind(Product product) {
+//            tvProductName.setText(product.getName());
+//            tvProductPrice.setText(String.valueOf(product.getPrice()));
+//
+////            ivProductImage.setImageURI(Uri.parse(product.getImage()));
+//            // Load image from URL
+//            String urls = "https://cdn.tgdd.vn/Products/Images/44/325699/acer-aspire-a515-58gm-53pz-i5-nxkq4sv008-2.jpg";
+//
+//
+//        }
 
         @Override
         public void onClick(View view) {
@@ -77,7 +94,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 intent.putExtra("name", clickedProduct.getName());
                 intent.putExtra("price", clickedProduct.getPrice());
                 intent.putExtra("description", clickedProduct.getDescription());
-                intent.putExtra("imageUrl", clickedProduct.getImageUrl());
+                intent.putExtra("imageUrl", clickedProduct.getImage());
                 context.startActivity(intent);
             }
         }

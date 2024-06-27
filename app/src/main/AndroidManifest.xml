@@ -15,9 +15,7 @@
         <activity
             android:name=".NewArrivalsActivity"
             android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+
         <activity
             android:name=".RegistrationActivity"
             android:exported="false" />

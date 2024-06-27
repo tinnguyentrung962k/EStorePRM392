@@ -47,6 +47,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(holder.itemView.getContext(), ProductDetailActivity.class);
+            intent.putExtra("product_id",item.getUid());
             intent.putExtra("product_name", item.getName());
             intent.putExtra("product_image", item.getImage());
             intent.putExtra("product_price", item.getPrice());
@@ -91,6 +92,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             if (position != RecyclerView.NO_POSITION) {
                 Product clickedProduct = productList.get(position);
                 Intent intent = new Intent(context, ProductDetailActivity.class);
+                intent.putExtra("uid",clickedProduct.getUid());
                 intent.putExtra("name", clickedProduct.getName());
                 intent.putExtra("price", clickedProduct.getPrice());
                 intent.putExtra("description", clickedProduct.getDescription());

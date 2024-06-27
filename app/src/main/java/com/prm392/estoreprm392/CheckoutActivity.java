@@ -6,6 +6,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.prm392.estoreprm392.service.model.Cart;
+import com.prm392.estoreprm392.service.model.Product;
 //import com.google.firebase.database.DatabaseReference;
 //import com.google.firebase.database.FirebaseDatabase;
 
@@ -13,12 +20,18 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private EditText etName, etAddress, etPhoneNumber;
     private Button btnPlaceOrder;
+    private FirebaseUser user;
+    private Cart myCart;
 //    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        fetchUserCart();
 
 //        etName = findViewById(R.id.etName);
 //        etAddress = findViewById(R.id.etAddress);
@@ -33,6 +46,24 @@ public class CheckoutActivity extends AppCompatActivity {
 //                placeOrder();
             }
         });
+    }
+
+    private void fetchUserCart() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("carts")
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Cart cart = document.toObject(Cart.class);
+                        if(cart.getUid().equals(user.getUid()))
+                            myCart = cart;
+                    }
+//                        productAdapter.notifyDataSetChanged();
+                } else {
+                    // Handle the error
+                }
+            });
     }
 
 //    private void placeOrder() {

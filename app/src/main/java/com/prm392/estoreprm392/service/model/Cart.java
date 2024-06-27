@@ -38,6 +38,9 @@ public class Cart {
         return ps;
     }
 
+    public Cart(){
+    }
+
     // receive form db
     public Cart(String name, ArrayList<String> productIds, String uid) {
         this.name = name;
@@ -79,10 +82,15 @@ public class Cart {
         for(Product p: products) this.productIds.add(p.getUid());
     }
 
+    public void update(){
+        this.products = fetchProducts(this.productIds);
+    }
+
     public void addProduct(Product product) {
         this.productIds.add(product.getUid());
         this.products = fetchProducts(productIds);
     }
+
     public void addProduct(String pUid) {
         this.productIds.add(pUid);
         this.products = fetchProducts(productIds);
@@ -107,9 +115,9 @@ public class Cart {
         return this.productIds;
     }
 
-//    public List<Product> getProducts(){
-//        return this.products;
-//    }
+    public List<Product> getProducts(){
+        return this.products;
+    }
 
     public String getName() {
         return this.name;
@@ -119,4 +127,15 @@ public class Cart {
         return this.uid;
     }
 
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "name='" + name + '\'' +
+                ", productIds=" + productIds +
+                ", products=" + products +
+                ", mAuth=" + mAuth +
+                ", user=" + user +
+                ", uid='" + uid + '\'' +
+                '}';
+    }
 }

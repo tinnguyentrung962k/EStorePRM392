@@ -66,6 +66,9 @@ import androidx.recyclerview.widget.RecyclerView;
 //import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.prm392.estoreprm392.service.model.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,8 +79,10 @@ public class CartActivity extends AppCompatActivity {
     private CartAdapter cartAdapter;
     private List<CartItem> cartItemList;
     private Button btnCheckout;
+    private Button btnReturn;
     private TextView cartTitle;
     private FirebaseUser currentUser;
+    private List<cartList> ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +91,7 @@ public class CartActivity extends AppCompatActivity {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-
+//        currentUser.getUid()
 
         recyclerViewCart = findViewById(R.id.recycler_view_cart);
         recyclerViewCart.setLayoutManager(new LinearLayoutManager(this));
@@ -95,17 +100,50 @@ public class CartActivity extends AppCompatActivity {
         recyclerViewCart.setAdapter(cartAdapter);
         cartTitle = findViewById(R.id.tvCartTitle);
         btnCheckout = findViewById(R.id.btnCheckout);
+        btnReturn = findViewById(R.id.btnReturn);
+        fetchCarts();
+        setupView();
+    }
+
+    private void setupView(){
+        btnReturn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            myOnClick(NewArrivalsActivity.class);
+            }
+        });
 
         cartTitle.setText(currentUser.getDisplayName() + "'s Cart");
 //        loadCartItems();
 
+
+
         btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
-                startActivity(intent);
+                myOnClick(Order.class);
             }
         });
+    }
+    private void myOnClick(Class<?>toPage){
+        Intent intent = new Intent(CartActivity.this, toPage);
+        startActivity(intent);
+    }
+    private void fetchCarts() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("cart")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Product product = document.toObject(Product.class);
+//                            productList.add(product);
+                        }
+//                        productAdapter.notifyDataSetChanged();
+                    } else {
+                        // Handle the error
+                    }
+                });
     }
 
 //    private void loadCartItems() {

@@ -1,130 +1,80 @@
 package com.prm392.estoreprm392;
 
-//import android.os.Bundle;
-//import android.widget.TextView;
-//
-//import androidx.appcompat.app.AppCompatActivity;
-//import androidx.recyclerview.widget.LinearLayoutManager;
-//import androidx.recyclerview.widget.RecyclerView;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//public class CartActivity extends AppCompatActivity {
-//
-//    private RecyclerView recyclerView;
-//    private CartAdapter cartAdapter;
-//    private List<CartItem> cartItemList;
-//    private TextView tvSubtotal;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_cart);
-//
-//        recyclerView = findViewById(R.id.recyclerView);
-//        tvSubtotal = findViewById(R.id.tvSubtotal);
-//
-//        cartItemList = new ArrayList<>();
-//        cartItemList.add(new CartItem("He Cares", 6000, 1));
-//        cartItemList.add(new CartItem("God Day", 6000, 2));
-//        cartItemList.add(new CartItem("Stay Gallant", 6000, 1));
-//        cartItemList.add(new CartItem("Be Courageous", 6000, 1));
-//
-//        cartAdapter = new CartAdapter(cartItemList, this);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(cartAdapter);
-//
-//        updateSubtotal();
-//    }
-//
-//    private void updateSubtotal() {
-//        int subtotal = 0;
-//        for (CartItem item : cartItemList) {
-//            subtotal += item.getProductPrice() * item.getQuantity();
-//        }
-//        tvSubtotal.setText("₦" + subtotal);
-//    }
-//}
-
-// Code trên này chưa test đừng mở phong ấn
-//
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.util.Log;
+import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-//import com.google.firebase.database.DataSnapshot;
-//import com.google.firebase.database.DatabaseError;
-//import com.google.firebase.database.DatabaseReference;
-//import com.google.firebase.database.FirebaseDatabase;
-//import com.google.firebase.database.ValueEventListener;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.prm392.estoreprm392.databinding.ActivityCartBinding;
+import com.prm392.estoreprm392.databinding.ActivityNewArrivalsBinding;
+import com.prm392.estoreprm392.service.model.CartItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CartActivity extends AppCompatActivity {
-
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private RecyclerView recyclerViewCart;
     private CartAdapter cartAdapter;
     private List<CartItem> cartItemList;
-    private Button btnCheckout;
-    private TextView cartTitle;
     private FirebaseUser currentUser;
+    private ActivityCartBinding binding;
+    private TextView totalPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cart);
+        binding = ActivityCartBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+        recyclerViewCart = binding.recyclerViewCart;
+        totalPrice = binding.tvTotal;
 
-
-        recyclerViewCart = findViewById(R.id.recycler_view_cart);
         recyclerViewCart.setLayoutManager(new LinearLayoutManager(this));
         cartItemList = new ArrayList<>();
-        cartAdapter = new CartAdapter(this, cartItemList);
+        cartAdapter = new CartAdapter(this, cartItemList, totalPrice);
         recyclerViewCart.setAdapter(cartAdapter);
-        cartTitle = findViewById(R.id.tvCartTitle);
-        btnCheckout = findViewById(R.id.btnCheckout);
 
-        cartTitle.setText(currentUser.getDisplayName() + "'s Cart");
-//        loadCartItems();
-
-        btnCheckout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
-                startActivity(intent);
-            }
-        });
+        loadCartItems();
     }
 
-//    private void loadCartItems() {
-//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("cartItems");
-//        databaseReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                cartItemList.clear();
-//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-//                    CartItem cartItem = dataSnapshot.getValue(CartItem.class);
-//                    cartItemList.add(cartItem);
-//                }
-//                cartAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                // Handle error
-//            }
-//        });
-//    }
+    private void loadCartItems() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            db.collection("carts").document(user.getUid()).collection("items")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            double total = 0.0;
+                            cartItemList.clear(); // Clear previous items before loading new ones
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                CartItem item = document.toObject(CartItem.class);
+                                cartItemList.add(item);
+                                total += item.getPrice() * item.getQuantity();
+                            }
+                            // Update total price TextView
+                            totalPrice.setText(String.valueOf(total));
+                            cartAdapter.notifyDataSetChanged();
+                        } else {
+                            // Show error message
+                            Log.e("FirestoreLoad", "Error loading cart items", task.getException());
+                        }
+                    });
+        }
+    }
 }

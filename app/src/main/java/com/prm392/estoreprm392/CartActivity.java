@@ -82,7 +82,6 @@ public class CartActivity extends AppCompatActivity {
     private Button btnReturn;
     private TextView cartTitle;
     private FirebaseUser currentUser;
-    private List<cartList> ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

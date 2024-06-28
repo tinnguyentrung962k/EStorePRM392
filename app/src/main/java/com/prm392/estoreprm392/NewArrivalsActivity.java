@@ -54,26 +54,9 @@ public class NewArrivalsActivity extends AppCompatActivity {
         productAdapter = new ProductAdapter(this, productList);
         recyclerViewNewArrivals.setAdapter(productAdapter);
         recyclerViewNewArrivals.setLayoutManager(new GridLayoutManager(this, 2));
-        recyclerViewNewArrivals.setAdapter(productAdapter);
         fetchProducts();
     }
-
-
-
-
-
     private void setupView() {
-
-//        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                // Xử lý khi người dùng kéo xuống để làm mới dữ liệu
-//                fetchProducts();
-//                swipeRefreshLayout.setRefreshing(false); // Dừng hiệu ứng làm mới
-//            }
-//        });
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("New Arrivals");
@@ -149,6 +132,8 @@ public class NewArrivalsActivity extends AppCompatActivity {
                 });
             }
         } else if (item.getItemId() == R.id.action_cart) {
+            Intent intent = new Intent(NewArrivalsActivity.this, CartActivity.class);
+            startActivity(intent);
 
         } else if (item.getItemId() == R.id.action_logout) {
 

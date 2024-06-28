@@ -1,25 +1,31 @@
 package com.prm392.estoreprm392;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.protobuf.StringValue;
-import com.prm392.estoreprm392.service.api.ApiService;
+import com.prm392.estoreprm392.service.model.CartItem;
 import com.prm392.estoreprm392.service.model.Product;
-import com.prm392.estoreprm392.service.api.RetrofitClient;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 //import com.google.firebase.storage.FirebaseStorage;
 //import com.google.firebase.storage.StorageReference;
 import retrofit2.Call;
@@ -31,11 +37,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ImageView ivProductDetailImage;
     private TextView tvProductDetailName, tvProductDetailPrice, tvProductDetailDescription;
     private Button btnAddToCart;
-    private List<Product> cartProductList;
-    private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
-    private String uid;
-
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,56 +50,51 @@ public class ProductDetailActivity extends AppCompatActivity {
         tvProductDetailDescription = findViewById(R.id.tvProductDetailDescription);
         btnAddToCart = findViewById(R.id.btnAddToCart);
 
-        // Initialize Firestore
-        db = FirebaseFirestore.getInstance();
-
-        // Initialize FirebaseAuth
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            uid = currentUser.getUid();
-        } else {
-            // Handle the case where the user is not logged in
-            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
-            finish(); // Finish the activity if user is not logged in
-            return;
-        }
-
         Intent intent = getIntent();
-        String uid = intent.getStringExtra("uid");
-        String name = intent.getStringExtra("product_name");
-        int price = intent.getIntExtra("product_price", 0);
-        String description = intent.getStringExtra("product_description");
-        String imageUrl = intent.getStringExtra("product_image");
-        String category = intent.getStringExtra("product_category");
+        String id = getIntent().getStringExtra("product_id");
+        String name = getIntent().getStringExtra("product_name");
+        int price = getIntent().getIntExtra("product_price", 0);
+        String description = getIntent().getStringExtra("product_description");
+        String imageUrl = getIntent().getStringExtra("product_image");
+
 
         tvProductDetailName.setText(name);
-        tvProductDetailPrice.setText(String.valueOf(price));
+        tvProductDetailPrice.setText(String.valueOf( price));
         tvProductDetailDescription.setText(description);
         Glide.with(this).load(imageUrl).into(ivProductDetailImage);
 
-        Product product = new Product(uid, name, description, imageUrl, price, category, "2");
+        Product product = new Product(id,name, description, imageUrl, price, "1");
 
-
-        cartProductList = new ArrayList<>();
-
-        // Add to cart button
-        btnAddToCart.setOnClickListener(v -> {
-            // Add to cart list
-            cartProductList.add(product);
-            // Gửi sản phẩm lên Firestore
-            sendToCartAPI(product);
+        // Xử lý sự kiện click cho nút "Add to Cart"
+        btnAddToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null) {
+                    CartItem cartItem = new CartItem(product.getUid(), product.getName(), 1, product.getPrice(),product.getImage());
+                    db.collection("carts").document(user.getUid()).collection("items")
+                            .add(cartItem)
+                            .addOnSuccessListener(documentReference -> {
+                                String cartItemId = documentReference.getId();
+                                cartItem.setUid(cartItemId);
+                                db.collection("carts").document(user.getUid()).collection("items")
+                                        .document(cartItemId)
+                                        .set(cartItem)
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(ProductDetailActivity.this, "Added to cart", Toast.LENGTH_SHORT).show();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(ProductDetailActivity.this, "Failed to update cart item", Toast.LENGTH_SHORT).show();
+                                        });
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(ProductDetailActivity.this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                            });
+                } else {
+                    Toast.makeText(ProductDetailActivity.this, "User not authenticated", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 
-    private void sendToCartAPI(Product product) {
-        // Create a cart document with uid
-        db.collection("carts").document(uid).set(product)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(ProductDetailActivity.this, "Product added to cart", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(ProductDetailActivity.this, "Failed to add product to cart", Toast.LENGTH_SHORT).show();
-                });
-    }
 }

@@ -64,14 +64,14 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String phoneOrEmail = etUserName.getText().toString();
+                String username = etUserName.getText().toString();
                 String password = etPass.getText().toString();
                 Regex emailRegex = new Regex("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$");
-                if (phoneOrEmail.isEmpty() || !emailRegex.matches(phoneOrEmail) || password.isEmpty()) {
+                if (username.isEmpty() || !emailRegex.matches(username) || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Invalid input!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                signUpWithFirebase(phoneOrEmail, password);
+                signUpWithFirebase(username, password);
             }
         });
         signUp.setOnClickListener(new View.OnClickListener() {

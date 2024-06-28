@@ -17,15 +17,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-//import com.google.firebase.firestore.QuerySnapshot;
-import com.prm392.estoreprm392.databinding.ActivityMainBinding;
 import com.prm392.estoreprm392.databinding.ActivityNewArrivalsBinding;
 import com.prm392.estoreprm392.service.model.Product;
 import com.prm392.estoreprm392.service.model.User;
@@ -84,6 +79,9 @@ public class NewArrivalsActivity extends AppCompatActivity {
                 Intent intent = new Intent(NewArrivalsActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
+            } else if (item.getItemId() == R.id.action_chatbox) {
+                Intent cartIntent = new Intent(NewArrivalsActivity.this, ChatBoxActivity.class);
+                startActivity(cartIntent);
             }
             return true;
         });

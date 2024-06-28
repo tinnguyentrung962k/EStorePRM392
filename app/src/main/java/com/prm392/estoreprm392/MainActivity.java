@@ -23,6 +23,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.prm392.estoreprm392.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.prm392.estoreprm392.service.model.Product;
 
 import java.util.ArrayList;
 import java.util.List;

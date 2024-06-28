@@ -5,9 +5,14 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
-public class ApiService {
+import retrofit2.http.Body;
+public interface ApiService {
     @GET("product")
-    public Call<List<Product>> getProducts() {
-        return null;
-    }
+    public Call<List<Product>> getProducts();
+
+    @POST("cart/products")
+    Call<Product> addToCart(@Body Product product);
+
+
+
 }

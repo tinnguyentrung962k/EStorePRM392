@@ -5,18 +5,19 @@ public class Product extends BaseModel {
     private String description;
     private String image;
     private int price;
-
+    private String category;
     private String shopId;
 
     public Product() {
     }
 
-    public Product(String uid, String name, String description, String image, int price, String shopId) {
+    public Product(String uid, String name, String description, String image, int price, String category, String shopId) {
         super(uid);
         this.name = name;
         this.description = description;
         this.image = image;
         this.price = price;
+        this.category = category;
         this.shopId = shopId;
     }
 
@@ -51,6 +52,12 @@ public class Product extends BaseModel {
     public void setPrice(int price) {
         this.price = price;
     }
+
+    public String getCategory() {
+        return  category;
+    }
+    public void  setCategory(String category) {this.shopId = shopId;}
+    
 
     public String getShopId() {
         return shopId;

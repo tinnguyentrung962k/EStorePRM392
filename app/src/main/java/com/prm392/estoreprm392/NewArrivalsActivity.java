@@ -50,7 +50,6 @@ public class NewArrivalsActivity extends AppCompatActivity {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         recyclerViewNewArrivals = findViewById(R.id.rvProduct);
-        recyclerViewNewArrivals.setLayoutManager(new LinearLayoutManager(this));
         productList = new ArrayList<> ();
         productAdapter = new ProductAdapter(this, productList);
         recyclerViewNewArrivals.setAdapter(productAdapter);

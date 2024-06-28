@@ -5,11 +5,19 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.protobuf.StringValue;
+import com.prm392.estoreprm392.service.api.ApiService;
 import com.prm392.estoreprm392.service.model.Product;
+import com.prm392.estoreprm392.service.api.RetrofitClient;
+
 import java.util.ArrayList;
 import java.util.List;
 //import com.google.firebase.storage.FirebaseStorage;
@@ -24,7 +32,9 @@ public class ProductDetailActivity extends AppCompatActivity {
     private TextView tvProductDetailName, tvProductDetailPrice, tvProductDetailDescription;
     private Button btnAddToCart;
     private List<Product> cartProductList;
-//    private FirebaseStorage firebaseStorage;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+    private String uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,37 +47,56 @@ public class ProductDetailActivity extends AppCompatActivity {
         tvProductDetailDescription = findViewById(R.id.tvProductDetailDescription);
         btnAddToCart = findViewById(R.id.btnAddToCart);
 
+        // Initialize Firestore
+        db = FirebaseFirestore.getInstance();
+
+        // Initialize FirebaseAuth
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            uid = currentUser.getUid();
+        } else {
+            // Handle the case where the user is not logged in
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            finish(); // Finish the activity if user is not logged in
+            return;
+        }
+
         Intent intent = getIntent();
-
-        String name = getIntent().getStringExtra("product_name");
-        int price = getIntent().getIntExtra("product_price", 0);
-        String description = getIntent().getStringExtra("product_description");
-        String imageUrl = getIntent().getStringExtra("product_image");
-
-//        int price_convert = Integer.parseInt(price);
+        String uid = intent.getStringExtra("uid");
+        String name = intent.getStringExtra("product_name");
+        int price = intent.getIntExtra("product_price", 0);
+        String description = intent.getStringExtra("product_description");
+        String imageUrl = intent.getStringExtra("product_image");
+        String category = intent.getStringExtra("product_category");
 
         tvProductDetailName.setText(name);
-        tvProductDetailPrice.setText(String.valueOf( price));
+        tvProductDetailPrice.setText(String.valueOf(price));
         tvProductDetailDescription.setText(description);
         Glide.with(this).load(imageUrl).into(ivProductDetailImage);
 
-        // Tạo đối tượng sản phẩm từ dữ liệu
-        Product product = new Product("1",name, description, imageUrl, price, "1");
+        Product product = new Product(uid, name, description, imageUrl, price, category, "2");
 
-        // Khởi tạo danh sách sản phẩm trong giỏ hàng nếu chưa có
+
         cartProductList = new ArrayList<>();
 
-        // Xử lý sự kiện click cho nút "Add to Cart"
+        // Add to cart button
         btnAddToCart.setOnClickListener(v -> {
-            // Thêm sản phẩm vào danh sách giỏ hàng
+            // Add to cart list
             cartProductList.add(product);
-            // Convert to ArrayList
-            ArrayList<Product> cartProductsArrayList = new ArrayList<>(cartProductList);
-            // Chuyển sang MyCartActivity và truyền danh sách sản phẩm giỏ hàng
-            Intent cartIntent = new Intent(ProductDetailActivity.this, CartActivity.class);
-            cartIntent.putExtra("cart_products", cartProductsArrayList);
-            startActivity(cartIntent);
+            // Gửi sản phẩm lên Firestore
+            sendToCartAPI(product);
         });
     }
 
+    private void sendToCartAPI(Product product) {
+        // Create a cart document with uid
+        db.collection("carts").document(uid).set(product)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(ProductDetailActivity.this, "Product added to cart", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ProductDetailActivity.this, "Failed to add product to cart", Toast.LENGTH_SHORT).show();
+                });
+    }
 }

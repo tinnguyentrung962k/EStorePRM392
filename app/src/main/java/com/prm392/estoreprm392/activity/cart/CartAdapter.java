@@ -1,4 +1,4 @@
-package com.prm392.estoreprm392;
+package com.prm392.estoreprm392.activity.cart;
 
 import android.content.Context;
 import android.util.Log;
@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.prm392.estoreprm392.R;
 import com.prm392.estoreprm392.service.model.CartItem;
 
 import java.util.List;

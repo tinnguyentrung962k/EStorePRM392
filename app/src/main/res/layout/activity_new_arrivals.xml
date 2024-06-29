@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".NewArrivalsActivity">
+    tools:context=".activity.product.NewArrivalsActivity">
 
 
 
@@ -59,7 +59,29 @@
             app:title="Product"
             app:titleMarginStart="40dp"
             app:titleTextColor="@color/white" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/toolbar"
+            android:padding="8dp">
 
+            <Button
+                android:id="@+id/btnPhone"
+                android:layout_width="3dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onPhoneButtonClick"
+                android:text="Phone" />
+
+            <Button
+                android:id="@+id/btnLaptop"
+                android:layout_width="3dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onLaptopButtonClick"
+                android:text="Laptop" />
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"

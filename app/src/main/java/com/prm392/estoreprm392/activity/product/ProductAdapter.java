@@ -1,9 +1,8 @@
 
-package com.prm392.estoreprm392;
+package com.prm392.estoreprm392.activity.product;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 //import com.google.firebase.FirebaseStorage;
 //import com.google.firebase.storage.StorageReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.prm392.estoreprm392.R;
 import com.prm392.estoreprm392.service.model.Product;
 import java.util.List;
 

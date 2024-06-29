@@ -1,4 +1,3 @@
-
 package com.prm392.estoreprm392.activity.product;
 
 import android.content.Context;
@@ -33,7 +32,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         this.productList = filteredList;
         notifyDataSetChanged();
     }
-
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -77,18 +75,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             tvViewMore = itemView.findViewById(R.id.tvViewMore);
             itemView.setOnClickListener(this);
         }
-
-//        void bind(Product product) {
-//            tvProductName.setText(product.getName());
-//            tvProductPrice.setText(String.valueOf(product.getPrice()));
-//
-////            ivProductImage.setImageURI(Uri.parse(product.getImage()));
-//            // Load image from URL
-//            String urls = "https://cdn.tgdd.vn/Products/Images/44/325699/acer-aspire-a515-58gm-53pz-i5-nxkq4sv008-2.jpg";
-//
-//
-//        }
-
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
@@ -105,3 +91,4 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
     }
 }
+

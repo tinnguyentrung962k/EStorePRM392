@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.SearchView;
+
+//import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,9 +20,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import com.prm392.estoreprm392.R;
 import com.prm392.estoreprm392.activity.cart.CartActivity;
 import com.prm392.estoreprm392.activity.user.LoginActivity;
+
 import com.prm392.estoreprm392.databinding.ActivityNewArrivalsBinding;
 import com.prm392.estoreprm392.service.model.Product;
 
@@ -32,8 +37,12 @@ public class NewArrivalsActivity extends AppCompatActivity {
     private RecyclerView recyclerViewNewArrivals;
     private ProductAdapter productAdapter;
     private List<Product> productList;
+
+    private List<Product> filteredList;
     private FirebaseUser currentUser;
     private ActivityNewArrivalsBinding binding;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +53,8 @@ public class NewArrivalsActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
         recyclerViewNewArrivals = findViewById(R.id.rvProduct);
         productList = new ArrayList<> ();
+//        search list
+        filteredList = new ArrayList<>();
         productAdapter = new ProductAdapter(this, productList);
         recyclerViewNewArrivals.setAdapter(productAdapter);
         recyclerViewNewArrivals.setLayoutManager(new GridLayoutManager(this, 2));
@@ -53,40 +64,60 @@ public class NewArrivalsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("New Arrivals");
-        toolbar.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.action_search) {
-                SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-                if (searchView != null) {
-                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                        @Override
-                        public boolean onQueryTextSubmit(String query) {
-                            return false;
-                        }
 
-                        @Override
-                        public boolean onQueryTextChange(String newText) {
-                            return false;
-                        }
-                    });
-                }
-            } else if (item.getItemId() == R.id.action_cart) {
-                Intent cartIntent = new Intent(NewArrivalsActivity.this, CartActivity.class);
-                startActivity(cartIntent);
-            } else if (item.getItemId() == R.id.action_logout) {
-                mAuth.signOut();
-                Intent intent = new Intent(NewArrivalsActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            } else if (item.getItemId() == R.id.action_chatbox) {
-//                Intent cartIntent = new Intent(NewArrivalsActivity.this, ChatBoxActivity.class);
+//        toolbar.setOnMenuItemClickListener(item -> {
+//            if (item.getItemId() == R.id.action_search) {
+//                SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+//                if (searchView != null) {
+//                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//                        @Override
+//                        public boolean onQueryTextSubmit(String query) {
+//                            return false;
+//                        }
+//
+//                        @Override
+//                        public boolean onQueryTextChange(String newText) {
+//                            filter(newText);
+//                            return true;
+//                        }
+//                    });
+//                    return true;
+//                }
+//            } else if (item.getItemId() == R.id.action_cart) {
+//                Intent cartIntent = new Intent(NewArrivalsActivity.this, CartActivity.class);
 //                startActivity(cartIntent);
-            }
-            return true;
-        });
+//            } else if (item.getItemId() == R.id.action_logout) {
+//                mAuth.signOut();
+//                Intent intent = new Intent(NewArrivalsActivity.this, LoginActivity.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//            return true;
+//        });
     }
 
+    private void filter(String text) {
+        filteredList.clear();
+        if (text.isEmpty()) {
+            filteredList.addAll(productList);
+        } else {
+            for (Product product : productList) {
+                if (product.getName().toLowerCase().contains(text.toLowerCase())) {
+                    filteredList.add(product);
+                }
 
+            }
+            if(filteredList.isEmpty()){
+                Toast.makeText(this, "No data found", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                    productAdapter.setFilteredList(filteredList);
+            }
+        }
+        productAdapter.notifyDataSetChanged();
+    }
 
+       
     private void fetchProducts() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("products")
@@ -96,6 +127,10 @@ public class NewArrivalsActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Product product = document.toObject(Product.class);
                             productList.add(product);
+
+                            filteredList.clear();
+                            filteredList.addAll(productList);
+                            productAdapter.notifyDataSetChanged();
                         }
                         productAdapter.notifyDataSetChanged();
                     } else {
@@ -106,7 +141,20 @@ public class NewArrivalsActivity extends AppCompatActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
-        return true;
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter(newText);
+                return true;
+            }
+        });
     }
 
     @Override

@@ -28,6 +28,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 //        firebaseStorage = FirebaseStorage.getInstance();
     }
 
+    public void setFilteredList(List<Product> filteredList){
+        this.productList = filteredList;
+        notifyDataSetChanged();
+    }
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -71,7 +75,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             tvViewMore = itemView.findViewById(R.id.tvViewMore);
             itemView.setOnClickListener(this);
         }
-
         @Override
         public void onClick(View view) {
             int position = getAdapterPosition();
@@ -88,10 +91,4 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
     }
 }
-
-
-
-
-
-
 

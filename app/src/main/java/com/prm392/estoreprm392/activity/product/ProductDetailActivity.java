@@ -19,8 +19,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.prm392.estoreprm392.R;
 import com.prm392.estoreprm392.service.model.CartItem;
 import com.prm392.estoreprm392.service.model.Product;
-//import com.google.firebase.storage.FirebaseStorage;
-//import com.google.firebase.storage.StorageReference;
 
 
 public class ProductDetailActivity extends AppCompatActivity {
@@ -62,6 +60,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null) {
+                  
                     CartItem cartItem = new CartItem(product.getUid(), product.getName(), 1, product.getPrice(), product.getImage());
 
                     // Check if item already exists in the cart
@@ -123,5 +122,5 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
         });
     }
-
 }
+

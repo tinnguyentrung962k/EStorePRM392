@@ -1,3 +1,4 @@
+
 package com.prm392.estoreprm392;
 
 import android.content.Context;
@@ -31,6 +32,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 //        firebaseStorage = FirebaseStorage.getInstance();
     }
 
+    public void setFilteredList(List<Product> filteredList){
+        this.productList = filteredList;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -49,11 +55,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             Intent intent = new Intent(holder.itemView.getContext(), ProductDetailActivity.class);
             intent.putExtra("product_id",item.getUid());
             intent.putExtra("product_name", item.getName());
-            intent.putExtra("uid",item.getUid());
             intent.putExtra("product_image", item.getImage());
             intent.putExtra("product_price", item.getPrice());
             intent.putExtra("product_description", item.getDescription());
-            intent.putExtra("product_category", item.getCategory());
             holder.itemView.getContext().startActivity(intent);
         });
     }
@@ -90,7 +94,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
         @Override
         public void onClick(View view) {
-
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
                 Product clickedProduct = productList.get(position);
@@ -99,17 +102,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                 intent.putExtra("name", clickedProduct.getName());
                 intent.putExtra("price", clickedProduct.getPrice());
                 intent.putExtra("description", clickedProduct.getDescription());
-                intent.putExtra("category", clickedProduct.getCategory());
                 intent.putExtra("imageUrl", clickedProduct.getImage());
                 context.startActivity(intent);
             }
         }
     }
 }
-
-
-
-
-
-
-

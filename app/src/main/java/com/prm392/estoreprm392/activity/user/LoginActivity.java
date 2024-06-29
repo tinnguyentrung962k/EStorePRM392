@@ -1,4 +1,4 @@
-package com.prm392.estoreprm392;
+package com.prm392.estoreprm392.activity.user;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,15 +6,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -34,6 +30,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.prm392.estoreprm392.R;
+import com.prm392.estoreprm392.activity.product.NewArrivalsActivity;
 import com.prm392.estoreprm392.service.model.User;
 
 import kotlin.text.Regex;
@@ -64,14 +62,14 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String phoneOrEmail = etUserName.getText().toString();
+                String username = etUserName.getText().toString();
                 String password = etPass.getText().toString();
                 Regex emailRegex = new Regex("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$");
-                if (phoneOrEmail.isEmpty() || !emailRegex.matches(phoneOrEmail) || password.isEmpty()) {
+                if (username.isEmpty() || !emailRegex.matches(username) || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Invalid input!", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                signUpWithFirebase(phoneOrEmail, password);
+                signUpWithFirebase(username, password);
             }
         });
         signUp.setOnClickListener(new View.OnClickListener() {

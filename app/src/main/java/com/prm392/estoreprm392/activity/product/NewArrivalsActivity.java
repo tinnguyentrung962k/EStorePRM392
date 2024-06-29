@@ -65,35 +65,6 @@ public class NewArrivalsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitle("New Arrivals");
 
-//        toolbar.setOnMenuItemClickListener(item -> {
-//            if (item.getItemId() == R.id.action_search) {
-//                SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-//                if (searchView != null) {
-//                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//                        @Override
-//                        public boolean onQueryTextSubmit(String query) {
-//                            return false;
-//                        }
-//
-//                        @Override
-//                        public boolean onQueryTextChange(String newText) {
-//                            filter(newText);
-//                            return true;
-//                        }
-//                    });
-//                    return true;
-//                }
-//            } else if (item.getItemId() == R.id.action_cart) {
-//                Intent cartIntent = new Intent(NewArrivalsActivity.this, CartActivity.class);
-//                startActivity(cartIntent);
-//            } else if (item.getItemId() == R.id.action_logout) {
-//                mAuth.signOut();
-//                Intent intent = new Intent(NewArrivalsActivity.this, LoginActivity.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//            return true;
-//        });
     }
 
     private void filter(String text) {
@@ -127,7 +98,6 @@ public class NewArrivalsActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Product product = document.toObject(Product.class);
                             productList.add(product);
-
                             filteredList.clear();
                             filteredList.addAll(productList);
                             productAdapter.notifyDataSetChanged();
@@ -155,6 +125,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
                 return true;
             }
         });
+        return true;
     }
 
     @Override

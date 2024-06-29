@@ -1,10 +1,7 @@
-package com.prm392.estoreprm392;
+package com.prm392.estoreprm392.activity.cart;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;

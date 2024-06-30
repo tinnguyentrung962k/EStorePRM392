@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
 //import android.widget.SearchView;
 import androidx.appcompat.widget.SearchView;
 
@@ -21,15 +22,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-//import com.google.firebase.firestore.QuerySnapshot;
+
 import com.prm392.estoreprm392.R;
+import com.prm392.estoreprm392.activity.cart.CartActivity;
+import com.prm392.estoreprm392.activity.user.LoginActivity;
+
 import com.prm392.estoreprm392.databinding.ActivityNewArrivalsBinding;
 import com.prm392.estoreprm392.service.model.Product;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.prm392.estoreprm392.activity.cart.CartActivity;
 
 public class NewArrivalsActivity extends AppCompatActivity {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -37,6 +39,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
     private RecyclerView recyclerViewNewArrivals;
     private ProductAdapter productAdapter;
     private List<Product> productList;
+
     private List<Product> filteredList;
     private FirebaseUser currentUser;
     private ActivityNewArrivalsBinding binding;
@@ -47,7 +50,6 @@ public class NewArrivalsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityNewArrivalsBinding.inflate(getLayoutInflater());
         setContentView(R.layout.activity_new_arrivals);
         setupView();
@@ -57,6 +59,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
         productList = new ArrayList<> ();
 //        search list
         filteredList = new ArrayList<>();
+
 
         btnPhones = findViewById(R.id.btnPhones);
         btnLaptops = findViewById(R.id.btnLaptops);
@@ -68,16 +71,19 @@ public class NewArrivalsActivity extends AppCompatActivity {
         btnLaptops.setOnClickListener(v -> fetchfilterProducts("Laptop"));
         btnAccessories.setOnClickListener(v -> fetchfilterProducts("Accessory"));
 
+
         productAdapter = new ProductAdapter(this, productList);
         recyclerViewNewArrivals.setAdapter(productAdapter);
         recyclerViewNewArrivals.setLayoutManager(new GridLayoutManager(this, 2));
         fetchProducts();
-
     }
     private void setupView() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("New Arrivals");
+
+
+
     }
 
     private void filter(String text) {
@@ -100,6 +106,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
         }
         productAdapter.notifyDataSetChanged();
     }
+
 
 //Lấy item theo filter
     private void fetchfilterProducts(String category) {
@@ -124,6 +131,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
     }
 
 //    Lấy hết Item
+
     private void fetchProducts() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("products")

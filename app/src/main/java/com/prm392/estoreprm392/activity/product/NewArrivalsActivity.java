@@ -1,5 +1,6 @@
 package com.prm392.estoreprm392.activity.product;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,12 +27,19 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import com.prm392.estoreprm392.R;
 import com.prm392.estoreprm392.activity.cart.CartActivity;
+import com.prm392.estoreprm392.activity.chat.ChatActivity;
+import com.prm392.estoreprm392.activity.chat.ChatBoxActivity;
 import com.prm392.estoreprm392.activity.user.LoginActivity;
 
 import com.prm392.estoreprm392.databinding.ActivityNewArrivalsBinding;
+import com.prm392.estoreprm392.service.model.Chat;
 import com.prm392.estoreprm392.service.model.Product;
+import com.prm392.estoreprm392.service.model.User;
+import com.prm392.estoreprm392.utils.AndroidUtil;
+import com.prm392.estoreprm392.utils.FirebaseUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NewArrivalsActivity extends AppCompatActivity {
@@ -44,10 +53,12 @@ public class NewArrivalsActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private ActivityNewArrivalsBinding binding;
 
+
     private Button btnAll;
     private Button btnPhones;
     private Button btnLaptops;
     private Button btnAccessories;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +92,6 @@ public class NewArrivalsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("New Arrivals");
-
 
     }
 
@@ -162,7 +172,6 @@ public class NewArrivalsActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Product product = document.toObject(Product.class);
                             productList.add(product);
-
                             filteredList.clear();
                             filteredList.addAll(productList);
                             productAdapter.notifyDataSetChanged();
@@ -191,28 +200,9 @@ public class NewArrivalsActivity extends AppCompatActivity {
                 return true;
             }
         });
-
         return super.onCreateOptionsMenu(menu);
     }
-
-    //    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
-//        MenuItem searchItem = menu.findItem(R.id.action_search);
-//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                filter(newText);
-//                return true;
-//            }
-//        });
-//    }
-
+  
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_search) {
@@ -235,10 +225,43 @@ public class NewArrivalsActivity extends AppCompatActivity {
             Intent intent = new Intent(NewArrivalsActivity.this, CartActivity.class);
             startActivity(intent);
 
-        } else if (item.getItemId() == R.id.action_logout) {
+        }
+        else if (item.getItemId() == R.id.action_chatbox) {
+            Intent intent = new Intent(NewArrivalsActivity.this, ChatBoxActivity.class);
+            startActivity(intent);
 
         }
+        else if (item.getItemId() == R.id.action_logout) {
+            mAuth.signOut();
+            Intent intent = new Intent(NewArrivalsActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else if (item.getItemId() == R.id.action_chat_admin) {
+            startChatWithAdmin();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startChatWithAdmin() {
+        String adminUserId = "8Rn5sgCtCGgnjXedcO082aqzhtu2";
+
+        db.collection("users").document(adminUserId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                User adminUser = task.getResult().toObject(User.class);
+                if (adminUser != null) {
+                    Intent intent = new Intent(NewArrivalsActivity.this, ChatActivity.class);
+                    AndroidUtil.passUserModelAsIntent(intent,adminUser);
+                    startActivity(intent);
+                } else {
+                    // Handle the case where the user data is not found
+                    Toast.makeText(NewArrivalsActivity.this, "Admin user not found", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                // Handle the error
+                Toast.makeText(NewArrivalsActivity.this, "Failed to fetch admin user", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

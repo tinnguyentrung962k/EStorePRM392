@@ -67,20 +67,32 @@
             android:padding="8dp">
 
             <Button
-                android:id="@+id/btnPhone"
+                android:id="@+id/btnPhones"
                 android:layout_width="3dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="onPhoneButtonClick"
-                android:text="Phone" />
+                android:text="Phones"
+                android:backgroundTint="@color/magenta"
+                />
 
             <Button
-                android:id="@+id/btnLaptop"
+                android:id="@+id/btnLaptops"
                 android:layout_width="3dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="onLaptopButtonClick"
-                android:text="Laptop" />
+                android:backgroundTint="@color/magenta"
+                android:text="Laptops" />
+
+            <Button
+                android:id="@+id/btnAccessories"
+                android:layout_width="3dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onAccessoriesButtonClick"
+                android:backgroundTint="@color/magenta"
+                android:text="Accessories" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

@@ -6,6 +6,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 //import android.widget.SearchView;
 import androidx.appcompat.widget.SearchView;
+
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,7 +41,9 @@ public class NewArrivalsActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private ActivityNewArrivalsBinding binding;
 
-
+    private Button btnPhones;
+    private Button btnLaptops;
+    private Button btnAccessories;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +58,16 @@ public class NewArrivalsActivity extends AppCompatActivity {
 //        search list
         filteredList = new ArrayList<>();
 
+        btnPhones = findViewById(R.id.btnPhones);
+        btnLaptops = findViewById(R.id.btnLaptops);
+        btnAccessories = findViewById(R.id.btnAccessories);
+
+
+
+        btnPhones.setOnClickListener(v -> fetchfilterProducts("Phone"));
+        btnLaptops.setOnClickListener(v -> fetchfilterProducts("Laptop"));
+        btnAccessories.setOnClickListener(v -> fetchfilterProducts("Accessory"));
+
         productAdapter = new ProductAdapter(this, productList);
         recyclerViewNewArrivals.setAdapter(productAdapter);
         recyclerViewNewArrivals.setLayoutManager(new GridLayoutManager(this, 2));
@@ -64,35 +78,6 @@ public class NewArrivalsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("New Arrivals");
-//        toolbar.setOnMenuItemClickListener(item -> {
-//            if (item.getItemId() == R.id.action_search) {
-//                SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-//                if (searchView != null) {
-//                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//                        @Override
-//                        public boolean onQueryTextSubmit(String query) {
-//                            return false;
-//                        }
-//
-//                        @Override
-//                        public boolean onQueryTextChange(String newText) {
-//                            filter(newText);
-//                            return true;
-//                        }
-//                    });
-//                    return true;
-//                }
-//            } else if (item.getItemId() == R.id.action_cart) {
-//                Intent cartIntent = new Intent(NewArrivalsActivity.this, CartActivity.class);
-//                startActivity(cartIntent);
-//            } else if (item.getItemId() == R.id.action_logout) {
-//                mAuth.signOut();
-//                Intent intent = new Intent(NewArrivalsActivity.this, LoginActivity.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//            return true;
-//        });
     }
 
     private void filter(String text) {
@@ -116,6 +101,29 @@ public class NewArrivalsActivity extends AppCompatActivity {
         productAdapter.notifyDataSetChanged();
     }
 
+//Lấy item theo filter
+    private void fetchfilterProducts(String category) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("products")
+                .whereEqualTo("category", category)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        productList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Product product = document.toObject(Product.class);
+                            productList.add(product);
+                        }
+                        filteredList.clear();
+                        filteredList.addAll(productList);
+                        productAdapter.notifyDataSetChanged();
+                    } else {
+                        // Handle the error
+                    }
+                });
+    }
+
+//    Lấy hết Item
     private void fetchProducts() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("products")

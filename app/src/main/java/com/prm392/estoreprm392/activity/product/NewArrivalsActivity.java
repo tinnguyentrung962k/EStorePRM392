@@ -61,6 +61,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
         filteredList = new ArrayList<>();
 
 
+
         btnPhones = findViewById(R.id.btnPhones);
         btnLaptops = findViewById(R.id.btnLaptops);
         btnAccessories = findViewById(R.id.btnAccessories);
@@ -72,6 +73,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
         btnAccessories.setOnClickListener(v -> fetchfilterProducts("Accessory"));
 
 
+
         productAdapter = new ProductAdapter(this, productList);
         recyclerViewNewArrivals.setAdapter(productAdapter);
         recyclerViewNewArrivals.setLayoutManager(new GridLayoutManager(this, 2));
@@ -81,7 +83,6 @@ public class NewArrivalsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("New Arrivals");
-
 
 
     }
@@ -108,6 +109,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
     }
 
 
+
 //Lấy item theo filter
     private void fetchfilterProducts(String category) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -132,6 +134,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
 
 //    Lấy hết Item
 
+
     private void fetchProducts() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("products")
@@ -141,6 +144,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Product product = document.toObject(Product.class);
                             productList.add(product);
+
                             filteredList.clear();
                             filteredList.addAll(productList);
                             productAdapter.notifyDataSetChanged();
@@ -152,6 +156,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -168,8 +173,27 @@ public class NewArrivalsActivity extends AppCompatActivity {
                 return true;
             }
         });
-        return true;
+
+        return super.onCreateOptionsMenu(menu);
     }
+
+    //    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+//        MenuItem searchItem = menu.findItem(R.id.action_search);
+//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                filter(newText);
+//                return true;
+//            }
+//        });
+//    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

@@ -13,12 +13,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.prm392.estoreprm392.R;
 import com.prm392.estoreprm392.service.model.CartItem;
 import com.prm392.estoreprm392.service.model.Product;
-//import com.google.firebase.storage.FirebaseStorage;
-//import com.google.firebase.storage.StorageReference;
 
 
 public class ProductDetailActivity extends AppCompatActivity {
@@ -60,24 +60,61 @@ public class ProductDetailActivity extends AppCompatActivity {
             public void onClick(View v) {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null) {
-                    CartItem cartItem = new CartItem(product.getUid(), product.getName(), 1, product.getPrice(),product.getImage());
+                  
+                    CartItem cartItem = new CartItem(product.getUid(), product.getName(), 1, product.getPrice(), product.getImage());
+
+                    // Check if item already exists in the cart
                     db.collection("carts").document(user.getUid()).collection("items")
-                            .add(cartItem)
-                            .addOnSuccessListener(documentReference -> {
-                                String cartItemId = documentReference.getId();
-                                cartItem.setUid(cartItemId);
-                                db.collection("carts").document(user.getUid()).collection("items")
-                                        .document(cartItemId)
-                                        .set(cartItem)
-                                        .addOnSuccessListener(aVoid -> {
-                                            Toast.makeText(ProductDetailActivity.this, "Added to cart", Toast.LENGTH_SHORT).show();
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            Toast.makeText(ProductDetailActivity.this, "Failed to update cart item", Toast.LENGTH_SHORT).show();
-                                        });
+                            .whereEqualTo("productId", product.getUid())  // Assuming productId is the unique identifier for products
+                            .get()
+                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                                boolean itemExists = false;
+                                String cartItemId = null;
+
+                                for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                                    CartItem existingItem = document.toObject(CartItem.class);
+                                    if (existingItem != null) {
+                                        itemExists = true;
+                                        cartItemId = document.getId();
+                                        break;
+                                    }
+                                }
+
+                                if (itemExists && cartItemId != null) {
+                                    // Item already exists in the cart, increase quantity by 1
+                                    db.collection("carts").document(user.getUid()).collection("items")
+                                            .document(cartItemId)
+                                            .update("quantity", FieldValue.increment(1))
+                                            .addOnSuccessListener(aVoid -> {
+                                                Toast.makeText(ProductDetailActivity.this, "Item quantity updated in cart", Toast.LENGTH_SHORT).show();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(ProductDetailActivity.this, "Failed to update item quantity in cart", Toast.LENGTH_SHORT).show();
+                                            });
+                                } else {
+                                    // Item does not exist in the cart, add new item
+                                    db.collection("carts").document(user.getUid()).collection("items")
+                                            .add(cartItem)
+                                            .addOnSuccessListener(documentReference -> {
+                                                String newItemId = documentReference.getId();
+                                                cartItem.setUid(newItemId);
+                                                db.collection("carts").document(user.getUid()).collection("items")
+                                                        .document(newItemId)
+                                                        .set(cartItem)
+                                                        .addOnSuccessListener(aVoid -> {
+                                                            Toast.makeText(ProductDetailActivity.this, "Added to cart", Toast.LENGTH_SHORT).show();
+                                                        })
+                                                        .addOnFailureListener(e -> {
+                                                            Toast.makeText(ProductDetailActivity.this, "Failed to update cart item", Toast.LENGTH_SHORT).show();
+                                                        });
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(ProductDetailActivity.this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                                            });
+                                }
                             })
                             .addOnFailureListener(e -> {
-                                Toast.makeText(ProductDetailActivity.this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ProductDetailActivity.this, "Failed to check item in cart", Toast.LENGTH_SHORT).show();
                             });
                 } else {
                     Toast.makeText(ProductDetailActivity.this, "User not authenticated", Toast.LENGTH_SHORT).show();
@@ -85,5 +122,5 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
         });
     }
-
 }
+

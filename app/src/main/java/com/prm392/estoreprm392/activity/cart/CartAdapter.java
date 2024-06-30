@@ -184,5 +184,5 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             decreaseBtn = itemView.findViewById(R.id.decreaseBtn);
         }
     }
-
 }
+

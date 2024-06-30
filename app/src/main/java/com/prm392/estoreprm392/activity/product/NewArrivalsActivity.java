@@ -1,5 +1,6 @@
 package com.prm392.estoreprm392.activity.product;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,12 +25,19 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import com.prm392.estoreprm392.R;
 import com.prm392.estoreprm392.activity.cart.CartActivity;
+import com.prm392.estoreprm392.activity.chat.ChatActivity;
+import com.prm392.estoreprm392.activity.chat.ChatBoxActivity;
 import com.prm392.estoreprm392.activity.user.LoginActivity;
 
 import com.prm392.estoreprm392.databinding.ActivityNewArrivalsBinding;
+import com.prm392.estoreprm392.service.model.Chat;
 import com.prm392.estoreprm392.service.model.Product;
+import com.prm392.estoreprm392.service.model.User;
+import com.prm392.estoreprm392.utils.AndroidUtil;
+import com.prm392.estoreprm392.utils.FirebaseUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NewArrivalsActivity extends AppCompatActivity {
@@ -41,7 +50,6 @@ public class NewArrivalsActivity extends AppCompatActivity {
     private List<Product> filteredList;
     private FirebaseUser currentUser;
     private ActivityNewArrivalsBinding binding;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,10 +158,43 @@ public class NewArrivalsActivity extends AppCompatActivity {
             Intent intent = new Intent(NewArrivalsActivity.this, CartActivity.class);
             startActivity(intent);
 
-        } else if (item.getItemId() == R.id.action_logout) {
+        }
+        else if (item.getItemId() == R.id.action_chatbox) {
+            Intent intent = new Intent(NewArrivalsActivity.this, ChatBoxActivity.class);
+            startActivity(intent);
 
         }
+        else if (item.getItemId() == R.id.action_logout) {
+            mAuth.signOut();
+            Intent intent = new Intent(NewArrivalsActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else if (item.getItemId() == R.id.action_chat_admin) {
+            startChatWithAdmin();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startChatWithAdmin() {
+        String adminUserId = "8Rn5sgCtCGgnjXedcO082aqzhtu2";
+
+        db.collection("users").document(adminUserId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                User adminUser = task.getResult().toObject(User.class);
+                if (adminUser != null) {
+                    Intent intent = new Intent(NewArrivalsActivity.this, ChatActivity.class);
+                    AndroidUtil.passUserModelAsIntent(intent,adminUser);
+                    startActivity(intent);
+                } else {
+                    // Handle the case where the user data is not found
+                    Toast.makeText(NewArrivalsActivity.this, "Admin user not found", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                // Handle the error
+                Toast.makeText(NewArrivalsActivity.this, "Failed to fetch admin user", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

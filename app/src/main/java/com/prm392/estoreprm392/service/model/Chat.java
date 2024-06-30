@@ -1,60 +1,54 @@
 package com.prm392.estoreprm392.service.model;
 
+import com.google.firebase.Timestamp;
+
+import java.util.List;
+
 public class Chat extends BaseModel{
-    private String message;
-    private String sender;
-    private String receiver;
-    private long timestamp;
+        private List<String> userIds;
+        private String lastMessage;
+        private String lastMessageSenderId;
+        private Timestamp lastMessageTimeStamp;
 
-    public Chat() {
-    }
+        public Chat() {}
 
-    public Chat(String message, String sender, String receiver, long timestamp) {
-        this.message = message;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.timestamp = timestamp;
-    }
+        public Chat(String uid, List<String> userIds, Timestamp lastMessageTimestamp, String lastMessageSenderId) {
+            super(uid);
+            this.userIds = userIds;
+            this.lastMessageTimeStamp = lastMessageTimestamp;
+            this.lastMessageSenderId = lastMessageSenderId;
+        }
 
-    public String getMessage() {
-        return message;
-    }
+        public List<String> getUserIds() {
+            return userIds;
+        }
 
-    public String getSender() {
-        return sender;
-    }
+        public void setUserIds(List<String> userIds) {
+            this.userIds = userIds;
+        }
 
-    public String getReceiver() {
-        return receiver;
-    }
+        public String getLastMessage() {
+            return lastMessage;
+        }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
+        public void setLastMessage(String lastMessage) {
+            this.lastMessage = lastMessage;
+        }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+        public String getLastMessageSenderId() {
+            return lastMessageSenderId;
+        }
 
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
+        public void setLastMessageSenderId(String lastMessageSenderId) {
+            this.lastMessageSenderId = lastMessageSenderId;
+        }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
-    }
+        public Timestamp getLastMessageTimeStamp() {
+            return lastMessageTimeStamp;
+        }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    @Override
-    public String toString() {
-        return "Chat{" +
-                "message='" + message + '\'' +
-                ", sender='" + sender + '\'' +
-                ", receiver='" + receiver + '\'' +
-                ", timestamp=" + timestamp +
-                '}';
-    }
+        public void setLastMessageTimeStamp(Timestamp lastMessageTimeStamp) {
+            this.lastMessageTimeStamp = lastMessageTimeStamp;
+        }
 }
+

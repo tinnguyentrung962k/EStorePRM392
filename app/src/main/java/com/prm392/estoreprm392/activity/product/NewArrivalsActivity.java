@@ -44,6 +44,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private ActivityNewArrivalsBinding binding;
 
+    private Button btnAll;
     private Button btnPhones;
     private Button btnLaptops;
     private Button btnAccessories;
@@ -60,18 +61,15 @@ public class NewArrivalsActivity extends AppCompatActivity {
 //        search list
         filteredList = new ArrayList<>();
 
-
-
+        btnAll = findViewById(R.id.btnAll);
         btnPhones = findViewById(R.id.btnPhones);
         btnLaptops = findViewById(R.id.btnLaptops);
         btnAccessories = findViewById(R.id.btnAccessories);
 
-
-
+        btnAll.setOnClickListener(v -> fetchProducts());
         btnPhones.setOnClickListener(v -> fetchfilterProducts("Phone"));
         btnLaptops.setOnClickListener(v -> fetchfilterProducts("Laptop"));
         btnAccessories.setOnClickListener(v -> fetchfilterProducts("Accessory"));
-
 
 
         productAdapter = new ProductAdapter(this, productList);
@@ -131,7 +129,27 @@ public class NewArrivalsActivity extends AppCompatActivity {
                     }
                 });
     }
+    //Lấy item theo filter
+    private void fetchfilterAllProducts() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("products")
 
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        productList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Product product = document.toObject(Product.class);
+                            productList.add(product);
+                        }
+                        filteredList.clear();
+                        filteredList.addAll(productList);
+                        productAdapter.notifyDataSetChanged();
+                    } else {
+                        // Handle the error
+                    }
+                });
+    }
 //    Lấy hết Item
 
 

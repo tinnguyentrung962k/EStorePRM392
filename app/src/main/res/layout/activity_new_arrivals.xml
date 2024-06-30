@@ -66,32 +66,42 @@
             android:layout_below="@id/toolbar"
             android:padding="8dp">
 
+
             <Button
-                android:id="@+id/btnPhones"
-                android:layout_width="3dp"
+                android:id="@+id/btnAll"
+                android:layout_width="10dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:onClick="onPhoneButtonClick"
-                android:text="Phones"
                 android:backgroundTint="@color/magenta"
-                />
+                android:onClick="onAllButtonClick"
+                android:text="All" />
+
+
+            <Button
+                android:id="@+id/btnPhones"
+                android:layout_width="38dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/magenta"
+                android:onClick="onPhoneButtonClick"
+                android:text="Phones" />
 
             <Button
                 android:id="@+id/btnLaptops"
-                android:layout_width="3dp"
+                android:layout_width="40dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:onClick="onLaptopButtonClick"
                 android:backgroundTint="@color/magenta"
+                android:onClick="onLaptopButtonClick"
                 android:text="Laptops" />
 
             <Button
                 android:id="@+id/btnAccessories"
-                android:layout_width="3dp"
+                android:layout_width="68dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:onClick="onAccessoriesButtonClick"
                 android:backgroundTint="@color/magenta"
+                android:onClick="onAccessoriesButtonClick"
                 android:text="Accessories" />
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>

@@ -79,8 +79,8 @@ public class CheckoutActivity extends AppCompatActivity {
                     placeOrder();
                     setCartItemsEmpty();
 
-//                    Intent intent = new Intent(CheckoutActivity.this, OrderSuccessActivity.class);
-//                    startActivity(intent);
+                    Intent i = new Intent(CheckoutActivity.this, OrderSuccessActivity.class);
+                    startActivity(i);
                 }
             }
         });

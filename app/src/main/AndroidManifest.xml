@@ -35,6 +35,9 @@
             android:name=".activity.order.CheckoutActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.order.OrderSuccessActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.user.LoginActivity"
             android:exported="true">
             <intent-filter>

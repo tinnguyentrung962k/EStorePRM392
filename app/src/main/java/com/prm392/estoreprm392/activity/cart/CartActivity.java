@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -79,12 +80,17 @@ public class CartActivity extends AppCompatActivity {
         btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseUser user = mAuth.getCurrentUser();
-                if (user != null) {
-                    // Navigate to CheckoutActivity with the updated total
-                    Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
-                    intent.putExtra("total", total);
-                    startActivity(intent);
+                if (cartItemList.isEmpty()) {
+                    // Show a message if the cart is empty
+                    Toast.makeText(CartActivity.this, "Your cart is empty", Toast.LENGTH_SHORT).show();
+                } else {
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    if (user != null) {
+                        // Navigate to CheckoutActivity with the updated total
+                        Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
+                        intent.putExtra("total", total);
+                        startActivity(intent);
+                    }
                 }
             }
         });

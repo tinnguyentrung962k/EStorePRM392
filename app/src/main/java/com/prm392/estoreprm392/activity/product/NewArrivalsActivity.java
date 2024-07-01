@@ -1,5 +1,6 @@
 package com.prm392.estoreprm392.activity.product;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,6 +8,8 @@ import android.view.MenuItem;
 
 //import android.widget.SearchView;
 import androidx.appcompat.widget.SearchView;
+
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,6 +19,7 @@ import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,12 +27,19 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import com.prm392.estoreprm392.R;
 import com.prm392.estoreprm392.activity.cart.CartActivity;
+import com.prm392.estoreprm392.activity.chat.ChatActivity;
+import com.prm392.estoreprm392.activity.chat.ChatBoxActivity;
 import com.prm392.estoreprm392.activity.user.LoginActivity;
 
 import com.prm392.estoreprm392.databinding.ActivityNewArrivalsBinding;
+import com.prm392.estoreprm392.service.model.Chat;
 import com.prm392.estoreprm392.service.model.Product;
+import com.prm392.estoreprm392.service.model.User;
+import com.prm392.estoreprm392.utils.AndroidUtil;
+import com.prm392.estoreprm392.utils.FirebaseUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NewArrivalsActivity extends AppCompatActivity {
@@ -43,6 +54,11 @@ public class NewArrivalsActivity extends AppCompatActivity {
     private ActivityNewArrivalsBinding binding;
 
 
+    private Button btnAll;
+    private Button btnPhones;
+    private Button btnLaptops;
+    private Button btnAccessories;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +71,18 @@ public class NewArrivalsActivity extends AppCompatActivity {
         productList = new ArrayList<> ();
 //        search list
         filteredList = new ArrayList<>();
+
+        btnAll = findViewById(R.id.btnAll);
+        btnPhones = findViewById(R.id.btnPhones);
+        btnLaptops = findViewById(R.id.btnLaptops);
+        btnAccessories = findViewById(R.id.btnAccessories);
+
+        btnAll.setOnClickListener(v -> fetchProducts());
+        btnPhones.setOnClickListener(v -> fetchfilterProducts("Phone"));
+        btnLaptops.setOnClickListener(v -> fetchfilterProducts("Laptop"));
+        btnAccessories.setOnClickListener(v -> fetchfilterProducts("Accessory"));
+
+
         productAdapter = new ProductAdapter(this, productList);
         recyclerViewNewArrivals.setAdapter(productAdapter);
         recyclerViewNewArrivals.setLayoutManager(new GridLayoutManager(this, 2));
@@ -88,7 +116,53 @@ public class NewArrivalsActivity extends AppCompatActivity {
         productAdapter.notifyDataSetChanged();
     }
 
-       
+
+
+//Lấy item theo filter
+    private void fetchfilterProducts(String category) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("products")
+                .whereEqualTo("category", category)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        productList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Product product = document.toObject(Product.class);
+                            productList.add(product);
+                        }
+                        filteredList.clear();
+                        filteredList.addAll(productList);
+                        productAdapter.notifyDataSetChanged();
+                    } else {
+                        // Handle the error
+                    }
+                });
+    }
+    //Lấy item theo filter
+    private void fetchfilterAllProducts() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("products")
+
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        productList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Product product = document.toObject(Product.class);
+                            productList.add(product);
+                        }
+                        filteredList.clear();
+                        filteredList.addAll(productList);
+                        productAdapter.notifyDataSetChanged();
+                    } else {
+                        // Handle the error
+                    }
+                });
+    }
+//    Lấy hết Item
+
+
     private void fetchProducts() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("products")
@@ -109,6 +183,7 @@ public class NewArrivalsActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -125,9 +200,9 @@ public class NewArrivalsActivity extends AppCompatActivity {
                 return true;
             }
         });
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
-
+  
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_search) {
@@ -150,10 +225,43 @@ public class NewArrivalsActivity extends AppCompatActivity {
             Intent intent = new Intent(NewArrivalsActivity.this, CartActivity.class);
             startActivity(intent);
 
-        } else if (item.getItemId() == R.id.action_logout) {
+        }
+        else if (item.getItemId() == R.id.action_chatbox) {
+            Intent intent = new Intent(NewArrivalsActivity.this, ChatBoxActivity.class);
+            startActivity(intent);
 
         }
+        else if (item.getItemId() == R.id.action_logout) {
+            mAuth.signOut();
+            Intent intent = new Intent(NewArrivalsActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else if (item.getItemId() == R.id.action_chat_admin) {
+            startChatWithAdmin();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startChatWithAdmin() {
+        String adminUserId = "8Rn5sgCtCGgnjXedcO082aqzhtu2";
+
+        db.collection("users").document(adminUserId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                User adminUser = task.getResult().toObject(User.class);
+                if (adminUser != null) {
+                    Intent intent = new Intent(NewArrivalsActivity.this, ChatActivity.class);
+                    AndroidUtil.passUserModelAsIntent(intent,adminUser);
+                    startActivity(intent);
+                } else {
+                    // Handle the case where the user data is not found
+                    Toast.makeText(NewArrivalsActivity.this, "Admin user not found", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                // Handle the error
+                Toast.makeText(NewArrivalsActivity.this, "Failed to fetch admin user", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 

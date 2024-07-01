@@ -26,6 +26,12 @@
             android:name=".activity.cart.CartActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.chat.ChatBoxActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.chat.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.order.CheckoutActivity"
             android:exported="false" />
         <activity

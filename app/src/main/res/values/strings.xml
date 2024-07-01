@@ -4,4 +4,6 @@
     <string name="password_hint">Password</string>
     <string name="image_button">button</string>
     <string name="default_web_client_id" translatable="false">1034364915901-dr7ctm85bsdmt113jiom25a7frv2sudf.apps.googleusercontent.com</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

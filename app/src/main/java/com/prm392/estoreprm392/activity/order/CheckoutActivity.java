@@ -140,7 +140,7 @@ public class CheckoutActivity extends AppCompatActivity {
                     .collection("carts")
                     .document(user.getUid())
                     .collection("items")
-                    .document(ci.getProductId())
+                    .document(ci.getUid())
                     .delete();
         }
 

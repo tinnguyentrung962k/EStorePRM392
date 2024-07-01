@@ -1,7 +1,12 @@
 package com.prm392.estoreprm392.activity.cart;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +17,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.prm392.estoreprm392.R;
+import com.prm392.estoreprm392.activity.order.CheckoutActivity;
 import com.prm392.estoreprm392.databinding.ActivityCartBinding;
 import com.prm392.estoreprm392.service.model.CartItem;
 
@@ -27,12 +34,16 @@ public class CartActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private ActivityCartBinding binding;
     private TextView totalPrice;
+    private Button btnCheckout;
+    double total = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCartBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        btnCheckout = findViewById(R.id.btnCheckout);
 
         currentUser = mAuth.getCurrentUser();
         recyclerViewCart = binding.recyclerViewCart;
@@ -44,6 +55,19 @@ public class CartActivity extends AppCompatActivity {
         recyclerViewCart.setAdapter(cartAdapter);
 
         loadCartItems();
+
+        btnCheckout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseUser user = mAuth.getCurrentUser();
+                if(user != null){
+                    // Navigate to CheckoutActivity
+                    Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
+                    intent.putExtra("total", total);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     private void loadCartItems() {
@@ -53,7 +77,7 @@ public class CartActivity extends AppCompatActivity {
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            double total = 0.0;
+
                             cartItemList.clear(); // Clear previous items before loading new ones
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 CartItem item = document.toObject(CartItem.class);

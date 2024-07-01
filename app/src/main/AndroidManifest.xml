@@ -32,6 +32,9 @@
             android:name=".activity.chat.ChatActivity"
             android:exported="false" />
         <activity
+            android:name=".activity.order.CheckoutActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.user.LoginActivity"
             android:exported="true">
             <intent-filter>

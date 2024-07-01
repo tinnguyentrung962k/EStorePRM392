@@ -1,56 +1,158 @@
 package com.prm392.estoreprm392.activity.order;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.prm392.estoreprm392.R;
-//import com.google.firebase.database.DatabaseReference;
-//import com.google.firebase.database.FirebaseDatabase;
+import com.prm392.estoreprm392.activity.user.RegistrationActivity;
+import com.prm392.estoreprm392.service.model.CartItem;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CheckoutActivity extends AppCompatActivity {
 
-    private EditText etName, etAddress, etPhoneNumber;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser user = mAuth.getCurrentUser();
+
+    CollectionReference cartItemsCollection = db.collection("carts").document(user.getUid()).collection("items");
+
+    private EditText etAddress, etPhone;
+    private TextView tvDeliveryFee, tvSubtotal, tvTotal;
     private Button btnPlaceOrder;
-//    private DatabaseReference databaseReference;
+
+    private List<CartItem> cartItemList;
+    int deliveryFee = 1000;
+    Map<String, Object> order = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
+        Intent intent = getIntent();
+        double total = intent.getDoubleExtra("total",0);
+        cartItemList = new ArrayList<>();
+        getCartItems();
 
-//        etName = findViewById(R.id.etName);
-//        etAddress = findViewById(R.id.etAddress);
-//        etPhoneNumber = findViewById(R.id.etPhoneNumber);
-//        btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
+        etAddress = findViewById(R.id.etAddress);
+        etPhone = findViewById(R.id.etPhone);
+
+        tvDeliveryFee = findViewById(R.id.tvDeliveryFee);
+        tvSubtotal = findViewById(R.id.tvSubtotal);
+        tvTotal = findViewById(R.id.tvTotal);
+
+        tvDeliveryFee.setText(String.valueOf(deliveryFee));
+        tvSubtotal.setText(String.valueOf(total));
+        tvTotal.setText(String.valueOf(total + deliveryFee));
+
+        btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
 
 //        databaseReference = FirebaseDatabase.getInstance().getReference("orders");
 
         btnPlaceOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                placeOrder();
+
+                if(cartItemList.isEmpty())
+                    Toast.makeText(CheckoutActivity.this, "Cart is empty", Toast.LENGTH_SHORT).show();
+                else {
+                    placeOrder();
+                    setCartItemsEmpty();
+
+//                    Intent intent = new Intent(CheckoutActivity.this, OrderSuccessActivity.class);
+//                    startActivity(intent);
+                }
             }
         });
     }
 
-//    private void placeOrder() {
-//        String name = etName.getText().toString().trim();
-//        String address = etAddress.getText().toString().trim();
-//        String phoneNumber = etPhoneNumber.getText().toString().trim();
-//
-//        String orderId = databaseReference.push().getKey();
-//        Order order = new Order(orderId, name, address, phoneNumber, cartItemList);
-//        databaseReference.child(orderId).setValue(order).addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                Intent intent = new Intent(CheckoutActivity.this, OrderSuccessActivity.class);
-//                startActivity(intent);
-//                finish();
-//            } else {
-//                // Handle error
-//            }
-//        });
-//    }
+    private void placeOrder() {
+
+        CollectionReference ordersCollection = db.collection("orders");
+        String newDocId = ordersCollection.document().getId();
+        DocumentReference orderDoc = ordersCollection.document(newDocId);
+
+        order.put("userDoc", user.getUid());
+        order.put("address", etAddress.getText().toString());
+        order.put("phone", etPhone.getText().toString());
+        order.put("total", Double.parseDouble( tvTotal.getText().toString()));
+
+        // add cart to order
+        for(CartItem ci : cartItemList)
+            orderDoc.collection("items").add(ci);
+
+        // add other information
+        orderDoc.set(order)
+            .addOnCompleteListener(command ->
+                Toast.makeText(
+                    CheckoutActivity.this,
+                    "Order placed successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+            );
+
+    }
+
+    private void getCartItems() {
+        if (user != null) {
+            db.collection("carts").document(user.getUid()).collection("items")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+
+                            cartItemList.clear(); // Clear previous items before loading new ones
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                CartItem item = document.toObject(CartItem.class);
+                                cartItemList.add(item);
+                            }
+                        } else {
+                            // Show error message
+                            Log.e("FirestoreLoad", "Error getting cart items", task.getException());
+                        }
+                    });
+        }
+    }
+
+    private void setCartItemsEmpty(){
+
+        for(CartItem ci: cartItemList){
+            db
+                    .collection("carts")
+                    .document(user.getUid())
+                    .collection("items")
+                    .document(ci.getUid())
+                    .delete();
+        }
+
+        db.collection("carts").document(user.getUid())
+            .delete()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful())
+                    Log.w("deleteCart", "done");
+                else
+                    // Show error message
+                    Log.e("FirestoreLoad", "Error getting cart items", task.getException());
+
+            });
+    }
 }

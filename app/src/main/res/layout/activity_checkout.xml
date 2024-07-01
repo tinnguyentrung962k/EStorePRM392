@@ -40,7 +40,7 @@
             <TextView
                 android:layout_width="91dp"
                 android:layout_height="wrap_content"
-                android:text="address" />
+                android:text="Address" />
 
             <EditText
                 android:id="@+id/etAddress"
@@ -54,7 +54,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="phone number" />
+                android:text="Phone number" />
 
             <EditText
                 android:id="@+id/etPhone"
@@ -85,45 +85,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Delivery Fee :" />
-
-                <TextView
-                    android:id="@+id/tvDeliveryFee"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="4dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Subtotal :" />
-
-                <TextView
-                    android:id="@+id/tvSubtotal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="4dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Total :" />
+                    android:text="Total :"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"/>
 
                 <TextView
                     android:id="@+id/tvTotal"

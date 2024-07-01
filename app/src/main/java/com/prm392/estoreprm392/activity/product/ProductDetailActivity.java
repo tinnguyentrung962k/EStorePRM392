@@ -52,7 +52,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         tvProductDetailDescription.setText(description);
         Glide.with(this).load(imageUrl).into(ivProductDetailImage);
 
-        Product product = new Product(id,name, description, imageUrl, price, "1");
+        Product product = new Product(id,name, description, imageUrl, price);
 
         // Xử lý sự kiện click cho nút "Add to Cart"
         btnAddToCart.setOnClickListener(new View.OnClickListener() {

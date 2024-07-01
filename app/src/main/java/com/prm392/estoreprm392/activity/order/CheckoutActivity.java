@@ -38,11 +38,10 @@ public class CheckoutActivity extends AppCompatActivity {
     CollectionReference cartItemsCollection = db.collection("carts").document(user.getUid()).collection("items");
 
     private EditText etAddress, etPhone;
-    private TextView tvDeliveryFee, tvSubtotal, tvTotal;
+    private TextView tvTotal;
     private Button btnPlaceOrder;
 
     private List<CartItem> cartItemList;
-    int deliveryFee = 1000;
     Map<String, Object> order = new HashMap<>();
 
     @Override
@@ -50,30 +49,21 @@ public class CheckoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
         Intent intent = getIntent();
-        double total = intent.getDoubleExtra("total",0);
+        double total = intent.getDoubleExtra("total", 0);
         cartItemList = new ArrayList<>();
         getCartItems();
 
         etAddress = findViewById(R.id.etAddress);
         etPhone = findViewById(R.id.etPhone);
-
-        tvDeliveryFee = findViewById(R.id.tvDeliveryFee);
-        tvSubtotal = findViewById(R.id.tvSubtotal);
         tvTotal = findViewById(R.id.tvTotal);
-
-        tvDeliveryFee.setText(String.valueOf(deliveryFee));
-        tvSubtotal.setText(String.valueOf(total));
-        tvTotal.setText(String.valueOf(total + deliveryFee));
+        tvTotal.setText(String.valueOf(total));
 
         btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
-
-//        databaseReference = FirebaseDatabase.getInstance().getReference("orders");
 
         btnPlaceOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(cartItemList.isEmpty())
+                if (cartItemList.isEmpty())
                     Toast.makeText(CheckoutActivity.this, "Cart is empty", Toast.LENGTH_SHORT).show();
                 else {
                     placeOrder();
@@ -86,8 +76,13 @@ public class CheckoutActivity extends AppCompatActivity {
         });
     }
 
-    private void placeOrder() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getCartItems(); // Reload cart items when activity resumes
+    }
 
+    private void placeOrder() {
         CollectionReference ordersCollection = db.collection("orders");
         String newDocId = ordersCollection.document().getId();
         DocumentReference orderDoc = ordersCollection.document(newDocId);
@@ -95,22 +90,17 @@ public class CheckoutActivity extends AppCompatActivity {
         order.put("userDoc", user.getUid());
         order.put("address", etAddress.getText().toString());
         order.put("phone", etPhone.getText().toString());
-        order.put("total", Double.parseDouble( tvTotal.getText().toString()));
+        order.put("total", Double.parseDouble(tvTotal.getText().toString()));
 
-        // add cart to order
-        for(CartItem ci : cartItemList)
+        // Add cart items to order
+        for (CartItem ci : cartItemList)
             orderDoc.collection("items").add(ci);
 
-        // add other information
+        // Add other information
         orderDoc.set(order)
-            .addOnCompleteListener(command ->
-                Toast.makeText(
-                    CheckoutActivity.this,
-                    "Order placed successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-            );
-
+                .addOnCompleteListener(command ->
+                        Toast.makeText(CheckoutActivity.this, "Order placed successfully", Toast.LENGTH_SHORT).show()
+                );
     }
 
     private void getCartItems() {
@@ -119,12 +109,15 @@ public class CheckoutActivity extends AppCompatActivity {
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-
                             cartItemList.clear(); // Clear previous items before loading new ones
+                            double newTotal = 0.0; // Variable to calculate the new subtotal
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 CartItem item = document.toObject(CartItem.class);
                                 cartItemList.add(item);
+                                newTotal += item.getPrice() * item.getQuantity(); // Calculate the subtotal
                             }
+                            // Update the subtotal and total price TextViews
+                            tvTotal.setText(String.format("%.1f", newTotal));
                         } else {
                             // Show error message
                             Log.e("FirestoreLoad", "Error getting cart items", task.getException());
@@ -133,11 +126,9 @@ public class CheckoutActivity extends AppCompatActivity {
         }
     }
 
-    private void setCartItemsEmpty(){
-
-        for(CartItem ci: cartItemList){
-            db
-                    .collection("carts")
+    private void setCartItemsEmpty() {
+        for (CartItem ci : cartItemList) {
+            db.collection("carts")
                     .document(user.getUid())
                     .collection("items")
                     .document(ci.getUid())
@@ -145,14 +136,13 @@ public class CheckoutActivity extends AppCompatActivity {
         }
 
         db.collection("carts").document(user.getUid())
-            .delete()
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful())
-                    Log.w("deleteCart", "done");
-                else
-                    // Show error message
-                    Log.e("FirestoreLoad", "Error getting cart items", task.getException());
-
-            });
+                .delete()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        Log.w("deleteCart", "done");
+                    else
+                        // Show error message
+                        Log.e("FirestoreLoad", "Error getting cart items", task.getException());
+                });
     }
 }

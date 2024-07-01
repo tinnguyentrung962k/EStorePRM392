@@ -5,8 +5,6 @@ import java.util.Date;
 public class User extends BaseModel {
     private String email;
     private String name;
-    private Boolean gender;
-    private Date dob;
 
     private String phoneNumber;
 
@@ -15,12 +13,10 @@ public class User extends BaseModel {
     public User() {
     }
 
-    public User(String uid, String email, String name, Boolean gender, Date dob, String phoneNumber, String protoUrl) {
+    public User(String uid, String email, String name, String phoneNumber, String protoUrl) {
         super(uid);
         this.email = email;
         this.name = name;
-        this.gender = gender;
-        this.dob = dob;
         this.phoneNumber = phoneNumber;
         this.protoUrl = protoUrl;
     }
@@ -39,22 +35,6 @@ public class User extends BaseModel {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Boolean getGender() {
-        return gender;
-    }
-
-    public void setGender(Boolean gender) {
-        this.gender = gender;
-    }
-
-    public Date getDob() {
-        return dob;
-    }
-
-    public void setDob(Date dob) {
-        this.dob = dob;
     }
 
     public String getPhoneNumber() {
@@ -78,8 +58,6 @@ public class User extends BaseModel {
         return "User{" +
                 "email='" + email + '\'' +
                 ", name='" + name + '\'' +
-                ", gender=" + gender +
-                ", dob=" + dob +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", protoUrl='" + protoUrl + '\'' +
                 '}';

@@ -26,97 +26,42 @@
             android:paddingTop="16dp"
             android:paddingBottom="8dp" />
 
-        <!-- Home Address Card -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:background="@drawable/bg_card">
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Home" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="08137031372" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="78, Bode Thomas Street, Surulere" />
-
-            </LinearLayout>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/edit_text_stroke"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/image_button" />
-
-        </LinearLayout>
-
-        <!-- Office Address Card -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:background="@drawable/bg_card"
-            android:layout_marginTop="8dp">
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Office" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="08195414861" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="8, Connal Road, Yaba, Lagos" />
-
-            </LinearLayout>
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/edit_text_stroke"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/image_button" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
         </LinearLayout>
 
         <!-- Billing Information Section -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="91dp"
+                android:layout_height="wrap_content"
+                android:text="address" />
+
+            <EditText
+                android:id="@+id/etAddress"
+                android:layout_width="285dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="phone number" />
+
+            <EditText
+                android:id="@+id/etPhone"
+                android:layout_width="289dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -143,9 +88,10 @@
                     android:text="Delivery Fee :" />
 
                 <TextView
+                    android:id="@+id/tvDeliveryFee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="₦2000" />
+                    android:text="" />
             </LinearLayout>
 
             <LinearLayout
@@ -161,9 +107,10 @@
                     android:text="Subtotal :" />
 
                 <TextView
+                    android:id="@+id/tvSubtotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="₦36,000" />
+                    android:text="" />
             </LinearLayout>
 
             <LinearLayout
@@ -179,9 +126,10 @@
                     android:text="Total :" />
 
                 <TextView
+                    android:id="@+id/tvTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="₦38,000.00" />
+                    android:text="" />
             </LinearLayout>
         </LinearLayout>
 
@@ -215,12 +163,17 @@
 
         <!-- Swipe for Payment Button -->
         <Button
+            android:id="@+id/btnPlaceOrder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Swipe for Payment"
-            android:backgroundTint="@color/primary"
+            android:backgroundTint="@color/magenta"
             android:textColor="@android:color/white"
             android:layout_marginTop="16dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </ScrollView>

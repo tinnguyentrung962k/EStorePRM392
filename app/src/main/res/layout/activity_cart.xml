@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".CartActivity">
+    tools:context=".activity.cart.CartActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,24 +14,13 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnReturn"
-            android:layout_width="150px"
-            android:layout_height="150px"
-            android:text="+"
-            android:backgroundTint="@color/white"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"/>
-
         <TextView
             android:id="@+id/tvCartTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textAlignment="center"
             android:text="My Cart"
-            android:textSize="24sp"
-            android:paddingBottom="16dp"
-            android:paddingLeft="20dp"
-            android:layout_gravity="center_vertical"/>
+            android:textSize="30sp" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -69,7 +58,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Continue to Checkout"
-        android:background="@color/pink_500"
+        android:background="@color/magenta"
         android:textColor="@android:color/white"
         android:padding="16dp"
         android:textSize="18sp"/>

@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.prm392.estoreprm392.R;
 import com.prm392.estoreprm392.activity.order.CheckoutActivity;
+import com.prm392.estoreprm392.activity.product.NewArrivalsActivity;
 import com.prm392.estoreprm392.databinding.ActivityCartBinding;
 import com.prm392.estoreprm392.service.model.CartItem;
 
@@ -35,7 +36,9 @@ public class CartActivity extends AppCompatActivity {
     private ActivityCartBinding binding;
     private TextView totalPrice;
     private Button btnCheckout;
-    double total = 0.0;
+    private double total = 0.0;
+    private ImageView btnBack;
+    private ImageView btnRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,8 @@ public class CartActivity extends AppCompatActivity {
         binding = ActivityCartBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        btnBack = findViewById(R.id.ivBackButton);
+        btnRefresh = findViewById(R.id.ivRefreshCartButton);
         btnCheckout = findViewById(R.id.btnCheckout);
 
         currentUser = mAuth.getCurrentUser();
@@ -56,12 +61,27 @@ public class CartActivity extends AppCompatActivity {
 
         loadCartItems();
 
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CartActivity.this, NewArrivalsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshCart();
+            }
+        });
+
         btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseUser user = mAuth.getCurrentUser();
-                if(user != null){
-                    // Navigate to CheckoutActivity
+                if (user != null) {
+                    // Navigate to CheckoutActivity with the updated total
                     Intent intent = new Intent(CartActivity.this, CheckoutActivity.class);
                     intent.putExtra("total", total);
                     startActivity(intent);
@@ -77,15 +97,15 @@ public class CartActivity extends AppCompatActivity {
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-
                             cartItemList.clear(); // Clear previous items before loading new ones
+                            total = 0.0; // Reset total before recalculating
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 CartItem item = document.toObject(CartItem.class);
                                 cartItemList.add(item);
                                 total += item.getPrice() * item.getQuantity();
                             }
                             // Update total price TextView
-                            totalPrice.setText(String.valueOf(total));
+                            totalPrice.setText(String.format("%.1f", total));
                             cartAdapter.notifyDataSetChanged();
                         } else {
                             // Show error message
@@ -93,5 +113,30 @@ public class CartActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private void refreshCart() {
+        setCartItemsEmpty();
+        loadCartItems();
+    }
+
+    private void setCartItemsEmpty() {
+        for (CartItem ci : cartItemList) {
+            db.collection("carts")
+                    .document(currentUser.getUid())
+                    .collection("items")
+                    .document(ci.getUid())
+                    .delete();
+        }
+
+        db.collection("carts").document(currentUser.getUid())
+                .delete()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        Log.w("deleteCart", "done");
+                    else
+                        // Show error message
+                        Log.e("FirestoreLoad", "Error getting cart items", task.getException());
+                });
     }
 }

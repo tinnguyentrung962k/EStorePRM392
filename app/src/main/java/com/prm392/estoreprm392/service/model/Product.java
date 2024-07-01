@@ -6,18 +6,15 @@ public class Product extends BaseModel {
     private String image;
     private int price;
 
-    private String shopId;
-
     public Product() {
     }
 
-    public Product(String uid, String name, String description, String image, int price, String shopId) {
+    public Product(String uid, String name, String description, String image, int price) {
         super(uid);
         this.name = name;
         this.description = description;
         this.image = image;
         this.price = price;
-        this.shopId = shopId;
     }
 
     public String getName() {
@@ -52,13 +49,6 @@ public class Product extends BaseModel {
         this.price = price;
     }
 
-    public String getShopId() {
-        return shopId;
-    }
-
-    public void setShopId(String shopId) {
-        this.shopId = shopId;
-    }
 
     @Override
     public String toString() {
@@ -66,8 +56,6 @@ public class Product extends BaseModel {
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", image='" + image + '\'' +
-                ", price=" + price +
-                ", shopId='" + shopId + '\'' +
-                '}';
+                ", price=" + price + '}';
     }
 }

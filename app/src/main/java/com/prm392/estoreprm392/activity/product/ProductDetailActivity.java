@@ -1,6 +1,14 @@
 package com.prm392.estoreprm392.activity.product;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -8,7 +16,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,6 +29,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.prm392.estoreprm392.R;
+import com.prm392.estoreprm392.activity.cart.CartActivity;
 import com.prm392.estoreprm392.service.model.CartItem;
 import com.prm392.estoreprm392.service.model.Product;
 
@@ -54,11 +67,23 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         Product product = new Product(id,name, description, imageUrl, price);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission( ProductDetailActivity.this,
+                    android.Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions( ProductDetailActivity.this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+
         // Xử lý sự kiện click cho nút "Add to Cart"
         btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseUser user = mAuth.getCurrentUser();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    makeNotification();
+                }
                 if (user != null) {
                   
                     CartItem cartItem = new CartItem(product.getUid(), product.getName(), 1, product.getPrice(), product.getImage());
@@ -119,6 +144,38 @@ public class ProductDetailActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(ProductDetailActivity.this, "User not authenticated", Toast.LENGTH_SHORT).show();
                 }
+            }
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            public void makeNotification(){
+                tvProductDetailName = findViewById(R.id.tvProductDetailName);
+                String productName = tvProductDetailName.getText().toString();
+                String channelID = "CHANNEL_ID_NOTIFICATION";
+
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelID);
+                builder.setSmallIcon(R.drawable.ic_notifications)
+                        .setContentTitle("You have been update your cart")
+                        .setContentText("Add " + productName + " to your cart")
+                        .setAutoCancel(true)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                Intent intent = new Intent(getApplicationContext(), CartActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0,intent,PendingIntent.FLAG_MUTABLE);
+                builder.setContentIntent(pendingIntent);
+                NotificationManager notificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                    NotificationChannel notificationChannel =
+                            notificationManager.getNotificationChannel(channelID);
+                    if (notificationChannel == null) {
+                        int importance = NotificationManager.IMPORTANCE_HIGH;
+                        notificationChannel = new NotificationChannel(channelID, "Some description", importance);
+                        notificationChannel.setLightColor(Color.GREEN);
+                        notificationChannel.enableVibration(true);
+                        notificationManager.createNotificationChannel(notificationChannel);
+                    }
+                }
+                notificationManager.notify(0, builder.build());
             }
         });
     }

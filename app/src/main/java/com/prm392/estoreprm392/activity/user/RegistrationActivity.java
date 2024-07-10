@@ -95,6 +95,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                     DocumentReference documentReference = db.collection("users").document(userId);
 
                                     Map<String, Object> user = new HashMap<>();
+                                    user.put("uid",userId);
                                     user.put("name", name);
                                     user.put("email", email);
                                     user.put("protoUrl","https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png");
